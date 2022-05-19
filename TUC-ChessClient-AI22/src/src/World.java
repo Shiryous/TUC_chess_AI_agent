@@ -1,5 +1,6 @@
 package src;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -15,7 +16,7 @@ public class World
 	private int nBranches = 0;
 	private int noPrize = 9;
 	private double inf = Double.POSITIVE_INFINITY;
-	
+	private int score_white, score_black;
 	public World()
 	{
 		board = new String[rows][columns];
@@ -80,228 +81,24 @@ public class World
 		this.myColor = myColor;
 	}
 	
-	public String selectAction()
+	public String selectAction(int score_white,int score_black)
 	{
+		this.score_white = score_white;
+		this.score_black = score_black;
 		availableMoves = new ArrayList<String>();
 				
 		if(myColor == 0)		// I am the white player
-			this.whiteMoves();
+			this.whiteMoves(board);
 		else					// I am the black player
-			this.blackMoves();
+			this.blackMoves(board);
 		
 		// keeping track of the branch factor
 		nTurns++;
 		nBranches += availableMoves.size();
 
-		return this.selectMinmax(5);
+		return this.selectMinmax(7); //this.UCTSearch();  this.selectMinmax(5);
 	}
-	
-	private void whiteMoves()
-	{
-		String firstLetter = "";
-		String secondLetter = "";
-		String move = "";
-				
-		for(int i=0; i<rows; i++)
-		{
-			for(int j=0; j<columns; j++)
-			{
-				firstLetter = Character.toString(board[i][j].charAt(0));
-				
-				// if it there is not a white chess part in this position then keep on searching
-				if(firstLetter.equals("B") || firstLetter.equals(" ") || firstLetter.equals("P"))
-					continue;
-				
-				// check the kind of the white chess part
-				secondLetter = Character.toString(board[i][j].charAt(1));
-				
-				if(secondLetter.equals("P"))	// it is a pawn
-				{
-					
-					// check if it can move one vertical position ahead
-					firstLetter = Character.toString(board[i-1][j].charAt(0));
-					
-					if(firstLetter.equals(" ") || firstLetter.equals("P"))
-					{
-						move = Integer.toString(i) + Integer.toString(j) + 
-							   Integer.toString(i-1) + Integer.toString(j);
-						
-						availableMoves.add(move);
-					}
-					
-					// check if it can move crosswise to the left
-					if(j!=0 && i!=0)
-					{
-						firstLetter = Character.toString(board[i-1][j-1].charAt(0));						
-						if(!(firstLetter.equals("W") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
-							move = Integer.toString(i) + Integer.toString(j) + 
-									   Integer.toString(i-1) + Integer.toString(j-1);
-								
-							availableMoves.add(move);
-						}											
-					}
-					
-					// check if it can move crosswise to the right
-					if(j!=columns-1 && i!=0)
-					{
-						firstLetter = Character.toString(board[i-1][j+1].charAt(0));
-						if(!(firstLetter.equals("W") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
-							
-							move = Integer.toString(i) + Integer.toString(j) + 
-									   Integer.toString(i-1) + Integer.toString(j+1);							
-							availableMoves.add(move);
-						}
-					}
-				}
-				else if(secondLetter.equals("R"))	// it is a rook
-				{
-					// check if it can move upwards
-					for(int k=0; k<rookBlocks; k++)
-					{
-						if((i-(k+1)) < 0)
-							break;
-						
-						firstLetter = Character.toString(board[i-(k+1)][j].charAt(0));
-						
-						if(firstLetter.equals("W"))
-							break;
-						
-						move = Integer.toString(i) + Integer.toString(j) + 
-							   Integer.toString(i-(k+1)) + Integer.toString(j);
-						
-						availableMoves.add(move);
-						
-						// prevent detouring a chesspart to attack the other
-						if(firstLetter.equals("B") || firstLetter.equals("P"))
-							break;
-					}
-					
-					// check if it can move downwards
-					for(int k=0; k<rookBlocks; k++)
-					{
-						if((i+(k+1)) == rows)
-							break;
-						
-						firstLetter = Character.toString(board[i+(k+1)][j].charAt(0));
-						
-						if(firstLetter.equals("W"))
-							break;
-						
-						move = Integer.toString(i) + Integer.toString(j) + 
-							   Integer.toString(i+(k+1)) + Integer.toString(j);
-						
-						availableMoves.add(move);
-						
-						// prevent detouring a chesspart to attack the other
-						if(firstLetter.equals("B") || firstLetter.equals("P"))
-							break;
-					}
-					
-					// check if it can move on the left
-					for(int k=0; k<rookBlocks; k++)
-					{
-						if((j-(k+1)) < 0)
-							break;
-						
-						firstLetter = Character.toString(board[i][j-(k+1)].charAt(0));
-						
-						if(firstLetter.equals("W"))
-							break;
-						
-						move = Integer.toString(i) + Integer.toString(j) + 
-							   Integer.toString(i) + Integer.toString(j-(k+1));
-						
-						availableMoves.add(move);
-						
-						// prevent detouring a chesspart to attack the other
-						if(firstLetter.equals("B") || firstLetter.equals("P"))
-							break;
-					}
-					
-					// check of it can move on the right
-					for(int k=0; k<rookBlocks; k++)
-					{
-						if((j+(k+1)) == columns)
-							break;
-						
-						firstLetter = Character.toString(board[i][j+(k+1)].charAt(0));
-						
-						if(firstLetter.equals("W"))
-							break;
-						
-						move = Integer.toString(i) + Integer.toString(j) + 
-							   Integer.toString(i) + Integer.toString(j+(k+1));
-						
-						availableMoves.add(move);
-						
-						// prevent detouring a chesspart to attack the other
-						if(firstLetter.equals("B") || firstLetter.equals("P"))
-							break;
-					}
-				}
-				else // it is the king
-				{
-					// check if it can move upwards
-					if((i-1) >= 0)
-					{
-						firstLetter = Character.toString(board[i-1][j].charAt(0));
-						
-						if(!firstLetter.equals("W"))
-						{
-							move = Integer.toString(i) + Integer.toString(j) + 
-								   Integer.toString(i-1) + Integer.toString(j);
-								
-							availableMoves.add(move);	
-						}
-					}
-					
-					// check if it can move downwards
-					if((i+1) < rows)
-					{
-						firstLetter = Character.toString(board[i+1][j].charAt(0));
-						
-						if(!firstLetter.equals("W"))
-						{
-							move = Integer.toString(i) + Integer.toString(j) + 
-								   Integer.toString(i+1) + Integer.toString(j);
-								
-							availableMoves.add(move);	
-						}
-					}
-					
-					// check if it can move on the left
-					if((j-1) >= 0)
-					{
-						firstLetter = Character.toString(board[i][j-1].charAt(0));
-						
-						if(!firstLetter.equals("W"))
-						{
-							move = Integer.toString(i) + Integer.toString(j) + 
-								   Integer.toString(i) + Integer.toString(j-1);
-								
-							availableMoves.add(move);	
-						}
-					}
-					
-					// check if it can move on the right
-					if((j+1) < columns)
-					{
-						firstLetter = Character.toString(board[i][j+1].charAt(0));
-						
-						if(!firstLetter.equals("W"))
-						{
-							move = Integer.toString(i) + Integer.toString(j) + 
-								   Integer.toString(i) + Integer.toString(j+1);
-								
-							availableMoves.add(move);	
-						}
-					}
-				}			
-			}	
-		}
-	}
-	
-	private void blackMoves()
+	private void blackMoves(String[][] board)
 	{
 		String firstLetter = "";
 		String secondLetter = "";
@@ -510,7 +307,629 @@ public class World
 			}	
 		}
 	}
+	private void whiteMoves(String[][] board)
+	{
+		String firstLetter = "";
+		String secondLetter = "";
+		String move = "";
+				
+		for(int i=0; i<rows; i++)
+		{
+			for(int j=0; j<columns; j++)
+			{
+				firstLetter = Character.toString(board[i][j].charAt(0));
+				
+				// if it there is not a white chess part in this position then keep on searching
+				if(firstLetter.equals("B") || firstLetter.equals(" ") || firstLetter.equals("P"))
+					continue;
+				
+				// check the kind of the white chess part
+				secondLetter = Character.toString(board[i][j].charAt(1));
+				
+				if(secondLetter.equals("P"))	// it is a pawn
+				{
+					
+					// check if it can move one vertical position ahead
+					firstLetter = Character.toString(board[i-1][j].charAt(0));
+					
+					if(firstLetter.equals(" ") || firstLetter.equals("P"))
+					{
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i-1) + Integer.toString(j);
+						
+						availableMoves.add(move);
+					}
+					
+					// check if it can move crosswise to the left
+					if(j!=0 && i!=0)
+					{
+						firstLetter = Character.toString(board[i-1][j-1].charAt(0));						
+						if(!(firstLetter.equals("W") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
+							move = Integer.toString(i) + Integer.toString(j) + 
+									   Integer.toString(i-1) + Integer.toString(j-1);
+								
+							availableMoves.add(move);
+						}											
+					}
+					
+					// check if it can move crosswise to the right
+					if(j!=columns-1 && i!=0)
+					{
+						firstLetter = Character.toString(board[i-1][j+1].charAt(0));
+						if(!(firstLetter.equals("W") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
+							
+							move = Integer.toString(i) + Integer.toString(j) + 
+									   Integer.toString(i-1) + Integer.toString(j+1);							
+							availableMoves.add(move);
+						}
+					}
+				}
+				else if(secondLetter.equals("R"))	// it is a rook
+				{
+					// check if it can move upwards
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((i-(k+1)) < 0)
+							break;
+						
+						firstLetter = Character.toString(board[i-(k+1)][j].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i-(k+1)) + Integer.toString(j);
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check if it can move downwards
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((i+(k+1)) == rows)
+							break;
+						
+						firstLetter = Character.toString(board[i+(k+1)][j].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i+(k+1)) + Integer.toString(j);
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check if it can move on the left
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((j-(k+1)) < 0)
+							break;
+						
+						firstLetter = Character.toString(board[i][j-(k+1)].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i) + Integer.toString(j-(k+1));
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check of it can move on the right
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((j+(k+1)) == columns)
+							break;
+						
+						firstLetter = Character.toString(board[i][j+(k+1)].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i) + Integer.toString(j+(k+1));
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+				}
+				else // it is the king
+				{
+					// check if it can move upwards
+					if((i-1) >= 0)
+					{
+						firstLetter = Character.toString(board[i-1][j].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i-1) + Integer.toString(j);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move downwards
+					if((i+1) < rows)
+					{
+						firstLetter = Character.toString(board[i+1][j].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i+1) + Integer.toString(j);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move on the left
+					if((j-1) >= 0)
+					{
+						firstLetter = Character.toString(board[i][j-1].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i) + Integer.toString(j-1);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move on the right
+					if((j+1) < columns)
+					{
+						firstLetter = Character.toString(board[i][j+1].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i) + Integer.toString(j+1);
+								
+							availableMoves.add(move);	
+						}
+					}
+				}			
+			}	
+		}
+	}
 	
+	/*
+	private void whiteMoves()
+	{
+		String firstLetter = "";
+		String secondLetter = "";
+		String move = "";
+				
+		for(int i=0; i<rows; i++)
+		{
+			for(int j=0; j<columns; j++)
+			{
+				firstLetter = Character.toString(board[i][j].charAt(0));
+				
+				// if it there is not a white chess part in this position then keep on searching
+				if(firstLetter.equals("B") || firstLetter.equals(" ") || firstLetter.equals("P"))
+					continue;
+				
+				// check the kind of the white chess part
+				secondLetter = Character.toString(board[i][j].charAt(1));
+				
+				if(secondLetter.equals("P"))	// it is a pawn
+				{
+					
+					// check if it can move one vertical position ahead
+					firstLetter = Character.toString(board[i-1][j].charAt(0));
+					
+					if(firstLetter.equals(" ") || firstLetter.equals("P"))
+					{
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i-1) + Integer.toString(j);
+						
+						availableMoves.add(move);
+					}
+					
+					// check if it can move crosswise to the left
+					if(j!=0 && i!=0)
+					{
+						firstLetter = Character.toString(board[i-1][j-1].charAt(0));						
+						if(!(firstLetter.equals("W") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
+							move = Integer.toString(i) + Integer.toString(j) + 
+									   Integer.toString(i-1) + Integer.toString(j-1);
+								
+							availableMoves.add(move);
+						}											
+					}
+					
+					// check if it can move crosswise to the right
+					if(j!=columns-1 && i!=0)
+					{
+						firstLetter = Character.toString(board[i-1][j+1].charAt(0));
+						if(!(firstLetter.equals("W") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
+							
+							move = Integer.toString(i) + Integer.toString(j) + 
+									   Integer.toString(i-1) + Integer.toString(j+1);							
+							availableMoves.add(move);
+						}
+					}
+				}
+				else if(secondLetter.equals("R"))	// it is a rook
+				{
+					// check if it can move upwards
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((i-(k+1)) < 0)
+							break;
+						
+						firstLetter = Character.toString(board[i-(k+1)][j].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i-(k+1)) + Integer.toString(j);
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check if it can move downwards
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((i+(k+1)) == rows)
+							break;
+						
+						firstLetter = Character.toString(board[i+(k+1)][j].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i+(k+1)) + Integer.toString(j);
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check if it can move on the left
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((j-(k+1)) < 0)
+							break;
+						
+						firstLetter = Character.toString(board[i][j-(k+1)].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i) + Integer.toString(j-(k+1));
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check of it can move on the right
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((j+(k+1)) == columns)
+							break;
+						
+						firstLetter = Character.toString(board[i][j+(k+1)].charAt(0));
+						
+						if(firstLetter.equals("W"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i) + Integer.toString(j+(k+1));
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("B") || firstLetter.equals("P"))
+							break;
+					}
+				}
+				else // it is the king
+				{
+					// check if it can move upwards
+					if((i-1) >= 0)
+					{
+						firstLetter = Character.toString(board[i-1][j].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i-1) + Integer.toString(j);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move downwards
+					if((i+1) < rows)
+					{
+						firstLetter = Character.toString(board[i+1][j].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i+1) + Integer.toString(j);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move on the left
+					if((j-1) >= 0)
+					{
+						firstLetter = Character.toString(board[i][j-1].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i) + Integer.toString(j-1);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move on the right
+					if((j+1) < columns)
+					{
+						firstLetter = Character.toString(board[i][j+1].charAt(0));
+						
+						if(!firstLetter.equals("W"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i) + Integer.toString(j+1);
+								
+							availableMoves.add(move);	
+						}
+					}
+				}			
+			}	
+		}
+	}*/
+	
+	/*
+	private void blackMoves()
+	{
+		String firstLetter = "";
+		String secondLetter = "";
+		String move = "";
+				
+		for(int i=0; i<rows; i++)
+		{
+			for(int j=0; j<columns; j++)
+			{
+				firstLetter = Character.toString(board[i][j].charAt(0));
+				
+				// if it there is not a black chess part in this position then keep on searching
+				if(firstLetter.equals("W") || firstLetter.equals(" ") || firstLetter.equals("P"))
+					continue;
+				
+				// check the kind of the white chess part
+				secondLetter = Character.toString(board[i][j].charAt(1));
+				
+				if(secondLetter.equals("P"))	// it is a pawn
+				{
+					
+					// check if it can move one vertical position ahead
+					firstLetter = Character.toString(board[i+1][j].charAt(0));
+					
+					if(firstLetter.equals(" ") || firstLetter.equals("P"))
+					{
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i+1) + Integer.toString(j);
+						
+						availableMoves.add(move);
+					}
+					
+					// check if it can move crosswise to the left
+					if(j!=0 && i!=rows-1)
+					{
+						firstLetter = Character.toString(board[i+1][j-1].charAt(0));
+						
+						if(!(firstLetter.equals("B") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
+							move = Integer.toString(i) + Integer.toString(j) + 
+									   Integer.toString(i+1) + Integer.toString(j-1);
+								
+							availableMoves.add(move);
+						}																	
+					}
+					
+					// check if it can move crosswise to the right
+					if(j!=columns-1 && i!=rows-1)
+					{
+						firstLetter = Character.toString(board[i+1][j+1].charAt(0));
+						
+						if(!(firstLetter.equals("B") || firstLetter.equals(" ") || firstLetter.equals("P"))) {
+							move = Integer.toString(i) + Integer.toString(j) + 
+									   Integer.toString(i+1) + Integer.toString(j+1);
+								
+							availableMoves.add(move);
+						}
+							
+						
+						
+					}
+				}
+				else if(secondLetter.equals("R"))	// it is a rook
+				{
+					// check if it can move upwards
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((i-(k+1)) < 0)
+							break;
+						
+						firstLetter = Character.toString(board[i-(k+1)][j].charAt(0));
+						
+						if(firstLetter.equals("B"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i-(k+1)) + Integer.toString(j);
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("W") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check if it can move downwards
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((i+(k+1)) == rows)
+							break;
+						
+						firstLetter = Character.toString(board[i+(k+1)][j].charAt(0));
+						
+						if(firstLetter.equals("B"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i+(k+1)) + Integer.toString(j);
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("W") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check if it can move on the left
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((j-(k+1)) < 0)
+							break;
+						
+						firstLetter = Character.toString(board[i][j-(k+1)].charAt(0));
+						
+						if(firstLetter.equals("B"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i) + Integer.toString(j-(k+1));
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("W") || firstLetter.equals("P"))
+							break;
+					}
+					
+					// check of it can move on the right
+					for(int k=0; k<rookBlocks; k++)
+					{
+						if((j+(k+1)) == columns)
+							break;
+						
+						firstLetter = Character.toString(board[i][j+(k+1)].charAt(0));
+						
+						if(firstLetter.equals("B"))
+							break;
+						
+						move = Integer.toString(i) + Integer.toString(j) + 
+							   Integer.toString(i) + Integer.toString(j+(k+1));
+						
+						availableMoves.add(move);
+						
+						// prevent detouring a chesspart to attack the other
+						if(firstLetter.equals("W") || firstLetter.equals("P"))
+							break;
+					}
+				}
+				else // it is the king
+				{
+					// check if it can move upwards
+					if((i-1) >= 0)
+					{
+						firstLetter = Character.toString(board[i-1][j].charAt(0));
+						
+						if(!firstLetter.equals("B"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i-1) + Integer.toString(j);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move downwards
+					if((i+1) < rows)
+					{
+						firstLetter = Character.toString(board[i+1][j].charAt(0));
+						
+						if(!firstLetter.equals("B"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i+1) + Integer.toString(j);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move on the left
+					if((j-1) >= 0)
+					{
+						firstLetter = Character.toString(board[i][j-1].charAt(0));
+						
+						if(!firstLetter.equals("B"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i) + Integer.toString(j-1);
+								
+							availableMoves.add(move);	
+						}
+					}
+					
+					// check if it can move on the right
+					if((j+1) < columns)
+					{
+						firstLetter = Character.toString(board[i][j+1].charAt(0));
+						
+						if(!firstLetter.equals("B"))
+						{
+							move = Integer.toString(i) + Integer.toString(j) + 
+								   Integer.toString(i) + Integer.toString(j+1);
+								
+							availableMoves.add(move);	
+						}
+					}
+				}			
+			}	
+		}
+	}*/
+	
+	@SuppressWarnings("unused")
 	private String selectRandomAction()
 	{		
 		Random ran = new Random();
@@ -518,13 +937,20 @@ public class World
 		
 		return availableMoves.get(x);
 	}
-	
+	/**
+	 * This part is the Minimax algorithm
+	 * @param depth
+	 * @return
+	 */
 	private String selectMinmax(int depth){
 		String best_move = null;
 		double max = -inf;
 		double min = inf;
-		
+		System.out.println("-----------------");
+		System.out.println("Evaluation = "+evaluate_board(board));
+		System.out.println("-----------------");
 		for(String move : availableMoves){
+			System.out.println("Move = "+move);
 			/* Deep copy the board*/
 			String[][] tmp_board = new String[rows][columns];
 			
@@ -535,12 +961,20 @@ public class World
 			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
+
+			if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
+				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}
+			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
+				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}
 			
 			if(myColor == 0) { // We are the maximizer
 				double score = maximize(tmp_board, depth-1, -inf, inf);				
 				if (score > max){
 					max = score;
 					best_move = move;
+					System.out.println("Best_move = "+best_move);
 				}
 			}
 			else {				// We are the minimizer
@@ -555,12 +989,18 @@ public class World
 	}
 	private double maximize(String[][] tmp_board, int depth, double alpha, double beta){
 		
-		if (depth == 0){
-			return evaluate_board(tmp_board);
+		availableMoves = new ArrayList<String>();
+		this.whiteMoves(tmp_board);
+		
+		
+		double evaluation = evaluate_board(tmp_board);
+		//System.out.println("ev = "+ evaluation);
+		if (depth == 0 ){//|| evaluation == 1000){
+			return evaluation;
 		}
 		
 		double max = -inf;
-
+		
 		for( String move : availableMoves){
 			/* Deep copy the board*/
 			String[][] tmp_board2 = new String[rows][columns];
@@ -573,29 +1013,41 @@ public class World
 					= tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board2[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
 			
+			if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
+				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}
+			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
+				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}
+			
+			
 			double score = minimize(tmp_board2, depth-1, alpha, beta);
 			
-			if (score > max){
-				max = score;
-			}
-			if (max > alpha) {
-				alpha = max;
-			}
+			max = Math.max(max, score);
+			alpha = Math.max(max, alpha);
+			
 			if (beta <= alpha) {
 				break;
 			}
+			
 		}
 
 		return max;
 	}
 	private double minimize(String[][] tmp_board, int depth, double alpha, double beta){
 		
-		if (depth == 0){
-			return evaluate_board(tmp_board);
+		availableMoves = new ArrayList<String>();
+		this.blackMoves(tmp_board);
+		
+		double evaluation = evaluate_board(tmp_board);
+		System.out.println("ev = "+ evaluation);
+		if(depth == 0 || evaluation == 1000 ){
+			System.out.println("!!!!!!!!!!!!!!!!!!!!"+depth);
+			return evaluation;
 		}
 		
 		double min = inf;
-				
+		
 		for( String move : availableMoves){
 			/* Deep copy the board*/
 			String[][] tmp_board2 = new String[rows][columns];
@@ -608,16 +1060,22 @@ public class World
 					= tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board2[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
 			
+			if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
+				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}
+			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
+				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}
+			
+			
 			double score = maximize(tmp_board2, depth-1,  alpha, beta);
 			
-			if (score < min)
-				min = score;
-			
-			if (min < beta) 
-				beta = min;
-			
-			if (beta <= alpha) 
+			min = Math.min(score, min);			
+			beta = Math.min(beta, min);
+
+			if (beta <= alpha) {
 				break;
+			}
 		}
 
 		return min;
@@ -627,28 +1085,264 @@ public class World
 	 * This is a simple evaluation function that counts the board piece worth
 	 * @return evaluation
 	 */
-	private int evaluate_board(String[][] tmp_board){
+	private double evaluate_board(String[][] tmp_board){
 		
-		int evaluation = 0;
+		double evaluation = 0;
+		boolean white_wins = true, black_wins = true;
 		
+		int counter_rows = 0;
+		int counter_cols;
+		evaluation = score_white - score_black;
 		for(String[] row : tmp_board){
-			
+			counter_cols = 0; 
 			for (String square : row){
 				
-				if 		(square == "BP"){					evaluation = evaluation - 1;}
+				if 		(square == "BP"){					
+					evaluation = evaluation - 1;
+					if (counter_rows < 6) {
+						if (counter_cols < 4) {
+							if(tmp_board[counter_rows + 1][counter_cols + 1] != "  "){
+								evaluation = evaluation - 0.5;
+							}
+						}
+						if (counter_cols > 0) {
+							if(tmp_board[counter_rows + 1][counter_cols - 1] != "  "){
+								evaluation = evaluation - 0.5;
+							}
+						}
+					}
+				}
 				else if (square == "BR") {					evaluation = evaluation - 3;}
-				else if (square == "BK") {					evaluation = evaluation - 8;}
-				else if (square == "WP") {					evaluation = evaluation + 1;}
+				else if (square == "BK") {	
+					white_wins = false;
+					evaluation = evaluation - 8;
+				}
+				else if (square == "WP") {			
+					evaluation = evaluation + 1;
+					if (counter_rows > 0) {
+						if (counter_cols < 4) {
+							if(tmp_board[counter_rows - 1][counter_cols + 1] != "  "){
+								evaluation = evaluation + 0.5;
+							}
+						}
+						if (counter_cols > 0) {
+							if(tmp_board[counter_rows - 1][counter_cols - 1] != "  "){
+								evaluation = evaluation + 0.5;
+							}
+						}
+					}
+				}
 				else if (square == "WR") {					evaluation = evaluation + 3;}
-				else if (square == "WK") {					evaluation = evaluation + 8;}
-				System.out.print(square);
+				else if (square == "WK") {	
+					black_wins = false;
+					evaluation = evaluation + 8;
+				}
+				counter_cols = counter_cols + 1;
+			}
+			counter_rows = counter_rows + 1;
+		}
+		if(white_wins) {
+			System.out.println("White Wins");
+			evaluation = 1000;
+		}
+		else if(black_wins) {
+			evaluation = -1000;
+		}
+
+		return evaluation;
+	}
+	
+	/**
+	 * This is the monte carlo tree search algorithm
+	 * @return
+	 */
+	private String UCTSearch() {
+		// Make the initial node
+		String[][] initial_board = new String[rows][columns];
+		for(int i=0; i<rows; i++)
+			for(int j=0; j<columns; j++)
+				initial_board[i][j] = board[i][j];
+		
+		Node node_initial = new Node(initial_board, null);
+		
+		// Computational bound is the time in seconds for our turn.
+		long startTime = System.currentTimeMillis();
+		while(System.currentTimeMillis()-startTime < 4000) {
+			Node selected_node = TreePolicy(node_initial);
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			int reward = DefaultPolicy(selected_node);
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			BackupNegamax(selected_node, reward);
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			
+		}
+		Node bChild = BestChild(node_initial,0);
+		return node_initial.actions.get(bChild);
+	}
+	
+	private Node TreePolicy(Node node) {
+		
+		while (isNonTerminal(node.key)) {
+			if(isNotFullyExpanded(node)) {
+				return Expand(node);
+			}
+			else {
+				node = BestChild(node, (1/Math.sqrt(2)));
+			}
+		}
+		
+		return node;
+	}
+	/**
+	 * Expand the current nodes child
+	 * @param node
+	 * @return
+	 */
+	private Node Expand(Node node) {
+		
+		// Deep copy the board
+		String[][] tmp_board = new String[rows][columns];		
+		tmp_board = node.key;
+		String move = null;
+		
+		for(int i=0; i < availableMoves.size(); i++) {
+			move = availableMoves.get(i);
+			if (!node.moves.contains(move)) {
+				node.moves.add(move);
+				break;
+			}
+		}
+		// Make move
+		tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
+				= node.key[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
+		tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
+		
+		if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
+			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+		}
+		else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
+			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+		}
+		
+		// Make it node and add to list
+		Node tmp_node = new Node(tmp_board, node);
+		node.child.add(tmp_node);
+		node.actions.put(tmp_node, move);
+		return tmp_node;
+	}
+	
+	private Node BestChild(Node node, double Cp) {
+		double best_UCT = -inf;
+		Node best_child = null;
+		for (Node child : node.child) {
+			double child_UCT = (child.Q/child.N) + 2 * Cp * Math.sqrt(Math.log(node.N)/child.N);
+			if (child_UCT > best_UCT) {
+				best_UCT = child_UCT;
+				best_child = child;
+			}
+		}
+		return best_child;
+	}
+	/**
+	 * This part is responsible for the simulation
+	 * @param selected_node
+	 * @return
+	 */
+	private int DefaultPolicy(Node selected_node) {
+		Random rand = new Random();
+		String move; 
+		String[][] tmp_board = new String[rows][columns];
+		
+		for(int i=0; i<rows; i++)
+			for(int j=0; j<columns; j++)
+				tmp_board[i][j] = selected_node.key[i][j];
+		//tmp_board = selected_node.key;
+		boolean color = false;
+
+		while(isNonTerminal(tmp_board)) {
+			//System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			// Make move
+			if (color == false) { // White available moves
+				availableMoves = new ArrayList<String>();
+				this.whiteMoves(tmp_board);
+				color = !color;
+			}
+			else {// BLack available moves
+				availableMoves = new ArrayList<String>();
+				this.blackMoves(tmp_board);
+				color = !color;
+			}
+			move = availableMoves.get(rand.nextInt(availableMoves.size()));
+			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
+					= selected_node.key[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
+			tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
+		}
+
+		return whiteWon(tmp_board);
+	}
+	
+	private void BackupNegamax(Node node, int reward) {
+		while (!(node.parent == null)) {
+			node.N = node.N + 1;
+			node.Q = node.Q + reward;
+			reward = -reward;
+			node = node.parent;
+		}
+		node.N = node.N + 1;
+		node.Q = node.Q + reward;
+		reward = -reward;
+	}
+	
+	/**
+	 * Checks if the state of the board is non terminal
+	 * @param node
+	 * @return True or False
+	 */
+	private boolean isNonTerminal(String[][] node) {
+		boolean white_wins = true, black_wins = true;
+		for(int i=0; i<rows; i++) {
+			for(int j=0; j<columns; j++) {
+
+				System.out.print(node[i][j]);
+				if(node[i][j] == "BK") {
+					white_wins = false;
+				}
+				else if(node[i][j] == "WK")  {
+					black_wins = false;
+				}
 			}
 			System.out.println();
 		}
-		System.out.println("-----------------");
-		System.out.println("Evaluation = "+evaluation);
-		System.out.println("-----------------");
-		return evaluation;
+		System.out.println("-------------");
+
+		return !(white_wins || black_wins);
+	}
+	/**
+	 * This function returns 1 if white won, or -1 if black won
+	 * @param node
+	 * @return who won
+	 */
+	private int whiteWon(String[][] node) {
+		int white_wins = 1;
+		for(int i=0; i<rows; i++) {
+			for(int j=0; j<columns; j++) {
+				if(node[i][j] == "BK") {
+					white_wins = -1;
+				}
+			}
+		}
+		return white_wins;
+	}
+	/**
+	 * Checks if the node is fully expanded
+	 * @param node
+	 * @return
+	 */
+	private boolean isNotFullyExpanded(Node node) {
+		if(availableMoves.size() == node.child.size()) {
+			return false;
+		}
+		return true;
 	}
 	
 	public double getAvgBFactor()
