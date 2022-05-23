@@ -1,6 +1,5 @@
 package src;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 
@@ -96,8 +95,12 @@ public class World
 		nTurns++;
 		nBranches += availableMoves.size();
 
-		return this.selectMinmax(7); //this.UCTSearch();  this.selectMinmax(5);
+		return this.UCTSearch();//this.selectMinmax(7); 
 	}
+	/**
+	 * This function is used to find the available moves for black
+	 * @param board The board current state
+	 */
 	private void blackMoves(String[][] board)
 	{
 		String firstLetter = "";
@@ -307,6 +310,10 @@ public class World
 			}	
 		}
 	}
+	/**
+	 * This function is used to find the available moves for white
+	 * @param board The board current state
+	 */
 	private void whiteMoves(String[][] board)
 	{
 		String firstLetter = "";
@@ -939,25 +946,23 @@ public class World
 	}
 	/**
 	 * This part is the Minimax algorithm
-	 * @param depth
-	 * @return
+	 * @param depth The depth that we will cut the search
+	 * @return A selected move for the agent to play
 	 */
 	private String selectMinmax(int depth){
 		String best_move = null;
 		double max = -inf;
 		double min = inf;
-		System.out.println("-----------------");
-		System.out.println("Evaluation = "+evaluate_board(board));
-		System.out.println("-----------------");
+
 		for(String move : availableMoves){
-			System.out.println("Move = "+move);
 			/* Deep copy the board*/
 			String[][] tmp_board = new String[rows][columns];
 			
 			for(int i=0; i<rows; i++)
 				for(int j=0; j<columns; j++)
 					tmp_board[i][j] = board[i][j];
-
+			tmp_board = simulate_move(tmp_board, move);
+			/*
 			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
@@ -968,13 +973,13 @@ public class World
 			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
 				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
 			}
+			*/
 			
 			if(myColor == 0) { // We are the maximizer
 				double score = maximize(tmp_board, depth-1, -inf, inf);				
 				if (score > max){
 					max = score;
 					best_move = move;
-					System.out.println("Best_move = "+best_move);
 				}
 			}
 			else {				// We are the minimizer
@@ -987,6 +992,14 @@ public class World
 		}
 		return best_move;
 	}
+	/**
+	 * This is a function for the maximizer. In our case the white player is the maximizer
+	 * @param tmp_board The boards current layout
+	 * @param depth The depth from the cut-off 
+	 * @param alpha Alpha used for the alpha-beta pruning
+	 * @param beta Beta used for the alpha-beta pruning
+	 * @return Evaluation of the moves
+	 */
 	private double maximize(String[][] tmp_board, int depth, double alpha, double beta){
 		
 		availableMoves = new ArrayList<String>();
@@ -1008,7 +1021,8 @@ public class World
 			for(int i=0; i<rows; i++)
 				for(int j=0; j<columns; j++)
 					tmp_board2[i][j] = tmp_board[i][j];
-			
+			tmp_board2 = simulate_move(tmp_board2, move);
+			/*
 			tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board2[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
@@ -1019,7 +1033,7 @@ public class World
 			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
 				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
 			}
-			
+			*/
 			
 			double score = minimize(tmp_board2, depth-1, alpha, beta);
 			
@@ -1034,6 +1048,14 @@ public class World
 
 		return max;
 	}
+	/**
+	 * This is a function for the minimizer. In our case the black player is the minimizer
+	 * @param tmp_board The boards current layout
+	 * @param depth The depth from the cut-off 
+	 * @param alpha Alpha used for the alpha-beta pruning
+	 * @param beta Beta used for the alpha-beta pruning
+	 * @return Evaluation of the moves
+	 */
 	private double minimize(String[][] tmp_board, int depth, double alpha, double beta){
 		
 		availableMoves = new ArrayList<String>();
@@ -1055,7 +1077,8 @@ public class World
 			for(int i=0; i<rows; i++)
 				for(int j=0; j<columns; j++)
 					tmp_board2[i][j] = tmp_board[i][j];
-			
+			tmp_board2 = simulate_move(tmp_board2, move);
+			/*
 			tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board2[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
@@ -1066,7 +1089,7 @@ public class World
 			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
 				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
 			}
-			
+			*/
 			
 			double score = maximize(tmp_board2, depth-1,  alpha, beta);
 			
@@ -1101,12 +1124,12 @@ public class World
 					evaluation = evaluation - 1;
 					if (counter_rows < 6) {
 						if (counter_cols < 4) {
-							if(tmp_board[counter_rows + 1][counter_cols + 1] != "  "){
+							if(tmp_board[counter_rows + 1][counter_cols + 1] != " "){
 								evaluation = evaluation - 0.5;
 							}
 						}
 						if (counter_cols > 0) {
-							if(tmp_board[counter_rows + 1][counter_cols - 1] != "  "){
+							if(tmp_board[counter_rows + 1][counter_cols - 1] != " "){
 								evaluation = evaluation - 0.5;
 							}
 						}
@@ -1121,12 +1144,12 @@ public class World
 					evaluation = evaluation + 1;
 					if (counter_rows > 0) {
 						if (counter_cols < 4) {
-							if(tmp_board[counter_rows - 1][counter_cols + 1] != "  "){
+							if(tmp_board[counter_rows - 1][counter_cols + 1] != " "){
 								evaluation = evaluation + 0.5;
 							}
 						}
 						if (counter_cols > 0) {
-							if(tmp_board[counter_rows - 1][counter_cols - 1] != "  "){
+							if(tmp_board[counter_rows - 1][counter_cols - 1] != " "){
 								evaluation = evaluation + 0.5;
 							}
 						}
@@ -1142,7 +1165,6 @@ public class World
 			counter_rows = counter_rows + 1;
 		}
 		if(white_wins) {
-			System.out.println("White Wins");
 			evaluation = 1000;
 		}
 		else if(black_wins) {
@@ -1154,7 +1176,7 @@ public class World
 	
 	/**
 	 * This is the monte carlo tree search algorithm
-	 * @return
+	 * @return A selected move to play
 	 */
 	private String UCTSearch() {
 		// Make the initial node
@@ -1162,18 +1184,34 @@ public class World
 		for(int i=0; i<rows; i++)
 			for(int j=0; j<columns; j++)
 				initial_board[i][j] = board[i][j];
-		
-		Node node_initial = new Node(initial_board, null);
-		
+		Node node_initial;
+		if (myColor == 0) {
+			node_initial = new Node(initial_board, null, true);
+		}
+		else{
+			node_initial = new Node(initial_board, null, false);
+		}
+
 		// Computational bound is the time in seconds for our turn.
 		long startTime = System.currentTimeMillis();
-		while(System.currentTimeMillis()-startTime < 4000) {
+		while(System.currentTimeMillis()-startTime < 6000) {
 			Node selected_node = TreePolicy(node_initial);
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			/*
+			System.out.println("Tree Policy Done.");
+			System.out.println("This is the selected board");
+			System.out.println("--------------------------");
+			for(int i=0; i<rows; i++) {
+				for(int j=0; j<columns; j++) {
+					System.out.printf("%-3s",selected_node.key[i][j]);
+				}
+				System.out.println();
+			}
+			*/
 			int reward = DefaultPolicy(selected_node);
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			//System.out.println("Default Policy Done");
+			
 			BackupNegamax(selected_node, reward);
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			//System.out.println("Backup Done");
 			
 		}
 		Node bChild = BestChild(node_initial,0);
@@ -1195,15 +1233,29 @@ public class World
 	}
 	/**
 	 * Expand the current nodes child
-	 * @param node
-	 * @return
+	 * @param node The node to expand
+	 * @return The expanded child
 	 */
 	private Node Expand(Node node) {
 		
 		// Deep copy the board
-		String[][] tmp_board = new String[rows][columns];		
-		tmp_board = node.key;
+		String[][] tmp_board = new String[rows][columns];
+		
+		for(int i=0; i<rows; i++)
+			for(int j=0; j<columns; j++)
+				tmp_board[i][j] = node.key[i][j];
+		
 		String move = null;
+		
+		// Make move
+		if (node.white) { // White available moves
+			availableMoves = new ArrayList<String>();
+			this.whiteMoves(tmp_board);
+		}
+		else {// BLack available moves
+			availableMoves = new ArrayList<String>();
+			this.blackMoves(tmp_board);
+		}
 		
 		for(int i=0; i < availableMoves.size(); i++) {
 			move = availableMoves.get(i);
@@ -1213,6 +1265,8 @@ public class World
 			}
 		}
 		// Make move
+		tmp_board = simulate_move(tmp_board, move);
+		/*
 		tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 				= node.key[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 		tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
@@ -1223,17 +1277,22 @@ public class World
 		else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
 			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
 		}
-		
+		*/
 		// Make it node and add to list
-		Node tmp_node = new Node(tmp_board, node);
+		Node tmp_node = new Node(tmp_board, node, !node.white);
 		node.child.add(tmp_node);
 		node.actions.put(tmp_node, move);
 		return tmp_node;
 	}
-	
+	/**
+	 * Choose the best child of this node base on the UCT
+	 * @param node 
+	 * @param Cp constant
+	 * @return The best child node based on the Upper Confidence Bound for Trees
+	 */
 	private Node BestChild(Node node, double Cp) {
 		double best_UCT = -inf;
-		Node best_child = null;
+		Node best_child = new Node(null, null, !node.white);
 		for (Node child : node.child) {
 			double child_UCT = (child.Q/child.N) + 2 * Cp * Math.sqrt(Math.log(node.N)/child.N);
 			if (child_UCT > best_UCT) {
@@ -1246,41 +1305,61 @@ public class World
 	/**
 	 * This part is responsible for the simulation
 	 * @param selected_node
-	 * @return
+	 * @return The best child node based on the Upper Confidence Bound for Trees
 	 */
 	private int DefaultPolicy(Node selected_node) {
 		Random rand = new Random();
 		String move; 
 		String[][] tmp_board = new String[rows][columns];
 		
-		for(int i=0; i<rows; i++)
-			for(int j=0; j<columns; j++)
+		for(int i=0; i<rows; i++) {
+			for(int j=0; j<columns; j++) {
 				tmp_board[i][j] = selected_node.key[i][j];
+			}
+		}
+		//System.out.println("-------------------");
 		//tmp_board = selected_node.key;
-		boolean color = false;
+		boolean color = selected_node.white;
 
 		while(isNonTerminal(tmp_board)) {
-			//System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			// Make move
-			if (color == false) { // White available moves
+			if (color) { // White available moves
 				availableMoves = new ArrayList<String>();
 				this.whiteMoves(tmp_board);
-				color = !color;
 			}
 			else {// BLack available moves
 				availableMoves = new ArrayList<String>();
 				this.blackMoves(tmp_board);
-				color = !color;
 			}
-			move = availableMoves.get(rand.nextInt(availableMoves.size()));
+			color = !color;
+			int move_num = availableMoves.size();
+			if(move_num == 0) {
+				break;
+			}
+			move = availableMoves.get(rand.nextInt(move_num));
+			tmp_board = simulate_move(tmp_board, move);
+
+			/*
 			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= selected_node.key[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
+			
+			if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
+				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}
+			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
+				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+			}*/
+			
 		}
 
 		return whiteWon(tmp_board);
 	}
-	
+	/**
+	 * Update the statistics of the selected tree
+	 * @param node The node which we started the simulation
+	 * @param reward Which player won
+	 */
 	private void BackupNegamax(Node node, int reward) {
 		while (!(node.parent == null)) {
 			node.N = node.N + 1;
@@ -1295,7 +1374,7 @@ public class World
 	
 	/**
 	 * Checks if the state of the board is non terminal
-	 * @param node
+	 * @param node The board
 	 * @return True or False
 	 */
 	private boolean isNonTerminal(String[][] node) {
@@ -1303,7 +1382,7 @@ public class World
 		for(int i=0; i<rows; i++) {
 			for(int j=0; j<columns; j++) {
 
-				System.out.print(node[i][j]);
+				//System.out.print(node[i][j]);
 				if(node[i][j] == "BK") {
 					white_wins = false;
 				}
@@ -1311,16 +1390,16 @@ public class World
 					black_wins = false;
 				}
 			}
-			System.out.println();
+			//System.out.println();
 		}
-		System.out.println("-------------");
+		//System.out.println("-------------");
 
 		return !(white_wins || black_wins);
 	}
 	/**
 	 * This function returns 1 if white won, or -1 if black won
 	 * @param node
-	 * @return who won
+	 * @return Which player won
 	 */
 	private int whiteWon(String[][] node) {
 		int white_wins = 1;
@@ -1335,8 +1414,8 @@ public class World
 	}
 	/**
 	 * Checks if the node is fully expanded
-	 * @param node
-	 * @return
+	 * @param node The node
+	 * @return True or False
 	 */
 	private boolean isNotFullyExpanded(Node node) {
 		if(availableMoves.size() == node.child.size()) {
@@ -1345,6 +1424,22 @@ public class World
 		return true;
 	}
 	
+	private String[][] simulate_move(String[][] tmp_board, String move) {
+
+		tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
+				= tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
+		tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
+
+		if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
+			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+		}
+		else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
+			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+		}
+		return tmp_board;
+		
+	}
+
 	public double getAvgBFactor()
 	{
 		return nBranches / (double) nTurns;
