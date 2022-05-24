@@ -1,5 +1,6 @@
 package src;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 
@@ -84,6 +85,7 @@ public class World
 	{
 		this.score_white = score_white;
 		this.score_black = score_black;
+		
 		availableMoves = new ArrayList<String>();
 				
 		if(myColor == 0)		// I am the white player
@@ -95,7 +97,7 @@ public class World
 		nTurns++;
 		nBranches += availableMoves.size();
 
-		return this.UCTSearch();//this.selectMinmax(7); 
+		return  this.selectMinmax(5, true); //
 	}
 	/**
 	 * This function is used to find the available moves for black
@@ -949,20 +951,27 @@ public class World
 	 * @param depth The depth that we will cut the search
 	 * @return A selected move for the agent to play
 	 */
-	private String selectMinmax(int depth){
-		String best_move = null;
+	private String selectMinmax(int depth, boolean ab_On){
+		String best_move = new String();
 		double max = -inf;
 		double min = inf;
 
-		for(String move : availableMoves){
+		ArrayList<String> myAvailableMoves = new ArrayList<>();
+		
+		for(String move : availableMoves) 
+			myAvailableMoves.add(move);
+		Collections.shuffle(myAvailableMoves);
+		for(String move : myAvailableMoves){
 			/* Deep copy the board*/
 			String[][] tmp_board = new String[rows][columns];
 			
 			for(int i=0; i<rows; i++)
 				for(int j=0; j<columns; j++)
 					tmp_board[i][j] = board[i][j];
-			tmp_board = simulate_move(tmp_board, move);
-			/*
+			
+			//tmp_board = simulate_move(tmp_board, move);
+			
+			
 			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
@@ -973,17 +982,22 @@ public class World
 			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
 				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
 			}
-			*/
+			
 			
 			if(myColor == 0) { // We are the maximizer
-				double score = maximize(tmp_board, depth-1, -inf, inf);				
+				//double score = maximize(tmp_board, depth-1, -inf, inf, ab_On);
+				double score = minimize(tmp_board, depth-1, -inf, inf, ab_On);		
+				//System.out.println("My color is white");
+
 				if (score > max){
 					max = score;
 					best_move = move;
 				}
 			}
 			else {				// We are the minimizer
-				double score = minimize(tmp_board, depth-1, -inf, inf);
+				System.out.println("My color is black");
+				//double score = minimize(tmp_board, depth-1, -inf, inf, ab_On);
+				double score = maximize(tmp_board, depth-1, -inf, inf, ab_On);		
 				if (score < min){
 					min = score;
 					best_move = move;
@@ -1000,29 +1014,36 @@ public class World
 	 * @param beta Beta used for the alpha-beta pruning
 	 * @return Evaluation of the moves
 	 */
-	private double maximize(String[][] tmp_board, int depth, double alpha, double beta){
+	private double maximize(String[][] tmp_board, int depth, double alpha, double beta, boolean ab_On){
+		
+		
+		double evaluation = evaluate_board(tmp_board);
+		//System.out.println("ev = "+ evaluation);
+		if (depth == 0) {// || evaluation == -1000){//|| evaluation == 1000){
+			return evaluation;
+		}
 		
 		availableMoves = new ArrayList<String>();
 		this.whiteMoves(tmp_board);
 		
 		
-		double evaluation = evaluate_board(tmp_board);
-		//System.out.println("ev = "+ evaluation);
-		if (depth == 0 ){//|| evaluation == 1000){
-			return evaluation;
-		}
-		
 		double max = -inf;
 		
-		for( String move : availableMoves){
+		ArrayList<String> myAvailableMoves = new ArrayList<>();
+		
+		for(String move : availableMoves) 
+			myAvailableMoves.add(move);
+		Collections.shuffle(myAvailableMoves);
+		for( String move : myAvailableMoves){
 			/* Deep copy the board*/
 			String[][] tmp_board2 = new String[rows][columns];
 			
 			for(int i=0; i<rows; i++)
 				for(int j=0; j<columns; j++)
 					tmp_board2[i][j] = tmp_board[i][j];
-			tmp_board2 = simulate_move(tmp_board2, move);
-			/*
+			
+			//tmp_board2 = simulate_move(tmp_board2, move);
+			
 			tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board2[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
@@ -1033,16 +1054,19 @@ public class World
 			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
 				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
 			}
-			*/
 			
-			double score = minimize(tmp_board2, depth-1, alpha, beta);
 			
+			double score = minimize(tmp_board2, depth-1, alpha, beta, ab_On);
 			max = Math.max(max, score);
-			alpha = Math.max(max, alpha);
-			
-			if (beta <= alpha) {
-				break;
+
+			if (ab_On) {
+				alpha = Math.max(max, alpha);
+				
+				if (beta <= alpha) {
+					break;
+				}
 			}
+
 			
 		}
 
@@ -1056,29 +1080,39 @@ public class World
 	 * @param beta Beta used for the alpha-beta pruning
 	 * @return Evaluation of the moves
 	 */
-	private double minimize(String[][] tmp_board, int depth, double alpha, double beta){
+	private double minimize(String[][] tmp_board, int depth, double alpha, double beta, boolean ab_On){
+		
+		
+		double evaluation = evaluate_board(tmp_board);
+		
+		if(depth == 0){//|| evaluation == 1000){
+			return evaluation;
+		}
 		
 		availableMoves = new ArrayList<String>();
 		this.blackMoves(tmp_board);
 		
-		double evaluation = evaluate_board(tmp_board);
-		System.out.println("ev = "+ evaluation);
-		if(depth == 0 || evaluation == 1000 ){
-			System.out.println("!!!!!!!!!!!!!!!!!!!!"+depth);
-			return evaluation;
-		}
-		
 		double min = inf;
 		
-		for( String move : availableMoves){
+		ArrayList<String> myAvailableMoves = new ArrayList<>();
+		
+		for(String move : availableMoves) 
+			myAvailableMoves.add(move);
+		Collections.shuffle(myAvailableMoves);
+		for( String move : myAvailableMoves){
 			/* Deep copy the board*/
 			String[][] tmp_board2 = new String[rows][columns];
+			
+			System.out.println("Depth " + depth);
+			System.out.println("Available Moves: "+myAvailableMoves);
+			System.out.println("--------------------------------");
 			
 			for(int i=0; i<rows; i++)
 				for(int j=0; j<columns; j++)
 					tmp_board2[i][j] = tmp_board[i][j];
-			tmp_board2 = simulate_move(tmp_board2, move);
-			/*
+			
+			//tmp_board2 = simulate_move(tmp_board2, move);
+			
 			tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
 					= tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
 			tmp_board2[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
@@ -1089,16 +1123,19 @@ public class World
 			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
 				tmp_board2[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
 			}
-			*/
 			
-			double score = maximize(tmp_board2, depth-1,  alpha, beta);
 			
-			min = Math.min(score, min);			
-			beta = Math.min(beta, min);
+			double score = maximize(tmp_board2, depth-1,  alpha, beta, ab_On);
+			min = Math.min(min, score);			
+			
+			if(ab_On) {
+				beta = Math.min(beta, min);
 
-			if (beta <= alpha) {
-				break;
+				if (beta <= alpha) {
+					break;
+				}
 			}
+
 		}
 
 		return min;
@@ -1116,26 +1153,90 @@ public class World
 		int counter_rows = 0;
 		int counter_cols;
 		evaluation = score_white - score_black;
+		
 		for(String[] row : tmp_board){
 			counter_cols = 0; 
 			for (String square : row){
 				
-				if 		(square == "BP"){					
+				if (square == "BP"){					
 					evaluation = evaluation - 1;
+					
 					if (counter_rows < 6) {
 						if (counter_cols < 4) {
-							if(tmp_board[counter_rows + 1][counter_cols + 1] != " "){
+							evaluation = evaluation - 0.1; // Expand on the board
+							if (tmp_board[counter_rows + 1][counter_cols + 1] == "WP") {
+								evaluation = evaluation - 0.25;
+							}
+							else if (tmp_board[counter_rows + 1][counter_cols + 1] == "WR") {
 								evaluation = evaluation - 0.5;
+							}
+							else if (tmp_board[counter_rows + 1][counter_cols + 1] == "WK") {
+								evaluation = evaluation - 2;
 							}
 						}
 						if (counter_cols > 0) {
-							if(tmp_board[counter_rows + 1][counter_cols - 1] != " "){
+							evaluation = evaluation - 0.1; // Expand on the board
+							if (tmp_board[counter_rows + 1][counter_cols - 1] == "WP") {
+								evaluation = evaluation - 0.25;
+							}
+							else if (tmp_board[counter_rows + 1][counter_cols - 1] == "WR") {
 								evaluation = evaluation - 0.5;
+							}
+							else if (tmp_board[counter_rows + 1][counter_cols - 1] == "WK") {
+								evaluation = evaluation - 2;
 							}
 						}
 					}
 				}
-				else if (square == "BR") {					evaluation = evaluation - 3;}
+				else if (square == "BR") {					
+					evaluation = evaluation - 3;
+					for(int i=1; i < 4; i++) {
+						if (counter_cols + i < 4) {
+							if (tmp_board[counter_rows][counter_cols + i] == " " || tmp_board[counter_rows][counter_cols + i] == "P" ) {
+								evaluation = evaluation - 0.1;
+							}
+							else {
+								evaluation = evaluation - 0.1;
+								break;
+							}
+						}
+
+					}
+					for(int i=1; i < 4; i++) {
+						if (counter_cols - i > 0) {
+							if (tmp_board[counter_rows][counter_cols - i] == " " || tmp_board[counter_rows][counter_cols - i] == "P" ) {
+								evaluation = evaluation - 0.1;
+							}
+							else {
+								evaluation = evaluation - 0.1;
+								break;
+							}
+						}
+					}
+					for(int i=1; i < 4; i++) {
+						if (counter_rows - i > 0) {
+							if (tmp_board[counter_rows-i][counter_cols] == " " || tmp_board[counter_rows-i][counter_cols] == "P" ) {
+								evaluation = evaluation - 0.05;
+							}
+							else {
+								evaluation = evaluation - 0.05;
+								break;
+							}
+						}
+					}
+					for(int i=1; i < 4; i++) {
+						if (counter_rows + i < 6) {
+							if (tmp_board[counter_rows+i][counter_cols] == " " || tmp_board[counter_rows+i][counter_cols] == "P" ) {
+								evaluation = evaluation - 0.05;
+							}
+							else {
+								evaluation = evaluation - 0.05
+										;
+								break;
+							}
+						}
+					}
+				}
 				else if (square == "BK") {	
 					white_wins = false;
 					evaluation = evaluation - 8;
@@ -1144,33 +1245,116 @@ public class World
 					evaluation = evaluation + 1;
 					if (counter_rows > 0) {
 						if (counter_cols < 4) {
-							if(tmp_board[counter_rows - 1][counter_cols + 1] != " "){
+							evaluation = evaluation + 0.1; // Expand on the board
+							if (tmp_board[counter_rows - 1][counter_cols + 1] == "BP") {
+								evaluation = evaluation + 0.25;
+							}
+							else if (tmp_board[counter_rows - 1][counter_cols + 1] == "BR") {
 								evaluation = evaluation + 0.5;
+							}
+							else if (tmp_board[counter_rows - 1][counter_cols + 1] == "BK") {
+								evaluation = evaluation + 2;
 							}
 						}
 						if (counter_cols > 0) {
-							if(tmp_board[counter_rows - 1][counter_cols - 1] != " "){
+							evaluation = evaluation + 0.1; // Expand on the board
+							if (tmp_board[counter_rows - 1][counter_cols - 1] == "BP") {
+								evaluation = evaluation + 0.25;
+							}
+							else if (tmp_board[counter_rows - 1][counter_cols - 1] == "BR") {
 								evaluation = evaluation + 0.5;
+							}
+							else if (tmp_board[counter_rows - 1][counter_cols - 1] == "BK") {
+								evaluation = evaluation + 2;
 							}
 						}
 					}
 				}
-				else if (square == "WR") {					evaluation = evaluation + 3;}
+				else if (square == "WR") {		
+					evaluation = evaluation + 3;
+					for(int i=1; i < 4; i++) {
+						if (counter_cols + i < 4) {
+							if (tmp_board[counter_rows][counter_cols + i] == " " || tmp_board[counter_rows][counter_cols + i] == "P" ) {
+								evaluation = evaluation + 0.1;
+							}
+							else {
+								evaluation = evaluation + 0.1;
+								break;
+							}
+						}
+
+					}
+					for(int i=1; i < 4; i++) {
+						if (counter_cols - i > 0) {
+							if (tmp_board[counter_rows][counter_cols - i] == " " || tmp_board[counter_rows][counter_cols - i] == "P" ) {
+								evaluation = evaluation + 0.1;
+							}
+							else {
+								evaluation = evaluation + 0.1;
+								break;
+							}
+						}
+					}
+					for(int i=1; i < 4; i++) {
+						if (counter_rows - i > 0) {
+							if (tmp_board[counter_rows-i][counter_cols] == " " || tmp_board[counter_rows-i][counter_cols] == "P" ) {
+								evaluation = evaluation + 0.05;
+							}
+							else {
+								evaluation = evaluation + 0.05;
+								break;
+							}
+						}
+					}
+					for(int i=1; i < 4; i++) {
+						if (counter_rows + i < 6) {
+							if (tmp_board[counter_rows+i][counter_cols] == " " || tmp_board[counter_rows+i][counter_cols] == "P" ) {
+								evaluation = evaluation + 0.05;
+							}
+							else {
+								evaluation = evaluation + 0.05;
+								break;
+							}
+						}
+					}
+				}
 				else if (square == "WK") {	
 					black_wins = false;
 					evaluation = evaluation + 8;
 				}
+				/*
+				else if (square == "P") {
+					if (myColor == 0) // Whire player
+						evaluation = evaluation - 0.7;
+					else
+						evaluation = evaluation + 0.7;
+				}*/
 				counter_cols = counter_cols + 1;
 			}
 			counter_rows = counter_rows + 1;
 		}
-		if(white_wins) {
+		
+		
+		if (white_wins)
 			evaluation = 1000;
-		}
-		else if(black_wins) {
+		
+		if (black_wins) {
 			evaluation = -1000;
 		}
-
+			
+		/*
+		if(white_wins && this.score_white + 8 > this.score_black) {
+			evaluation = 1000;
+		}
+		else if(white_wins && this.score_white + 8 < this.score_black)
+			evaluation = -1000;
+		
+		if(black_wins && this.score_white < this.score_black + 8) {
+			evaluation = -1000;
+		}
+		else if(black_wins && this.score_white > this.score_black + 8)
+			evaluation = 1000;
+		 */
 		return evaluation;
 	}
 	
@@ -1184,6 +1368,7 @@ public class World
 		for(int i=0; i<rows; i++)
 			for(int j=0; j<columns; j++)
 				initial_board[i][j] = board[i][j];
+		
 		Node node_initial;
 		if (myColor == 0) {
 			node_initial = new Node(initial_board, null, true);
@@ -1194,7 +1379,7 @@ public class World
 
 		// Computational bound is the time in seconds for our turn.
 		long startTime = System.currentTimeMillis();
-		while(System.currentTimeMillis()-startTime < 6000) {
+		while(System.currentTimeMillis()-startTime < 4000) {
 			Node selected_node = TreePolicy(node_initial);
 			/*
 			System.out.println("Tree Policy Done.");
@@ -1339,17 +1524,17 @@ public class World
 			move = availableMoves.get(rand.nextInt(move_num));
 			tmp_board = simulate_move(tmp_board, move);
 
-			/*
-			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
-					= selected_node.key[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
-			tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
-			
-			if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
-				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
-			}
-			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
-				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
-			}*/
+//			
+//			tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] 
+//					= selected_node.key[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
+//			tmp_board[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
+//			
+//			if(Character.getNumericValue(move.charAt(2)) == 0 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "WP") {
+//				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+//			}
+//			else if(Character.getNumericValue(move.charAt(2)) == 6 && tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] == "BP") {
+//				tmp_board[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = " ";
+//			}
 			
 		}
 
@@ -1408,6 +1593,11 @@ public class World
 				if(node[i][j] == "BK") {
 					white_wins = -1;
 				}
+//				else if (node[i][j] == "WK") {
+//					white_wins = 1;
+//				}
+//				else
+//					white_wins = 0;
 			}
 		}
 		return white_wins;
