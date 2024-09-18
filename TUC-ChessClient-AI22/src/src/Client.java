@@ -19,14 +19,14 @@ public class Client
 	private DatagramPacket receivePacket = null;
 	private InetAddress host = null;
 	
-	private String myName = "Mantalos";
+	private String myName = "Player";
 	// private int counterMsg = 0;		optional use
 	private String receivedMsg = "";
 	private int myColor = 0;
 	private World world = null;
 	private int scoreWhite = 0;
 	private int scoreBlack = 0;
-	private int delay = 10;		// never set it to 0
+	private int delay = 100;		// never set it to 0
 	
 	public Client()
 	{
