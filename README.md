@@ -1,5 +1,5 @@
 <H1> TUC Chess AI agent</H1>
-This repository holds the enviroment and the agent of TUC-CHESS that was designed and developed for the purposes of the course "Artificial Intelligence" during the 2022 year. 
+This repository holds the enviroment and the agent of TUC-CHESS that was designed and developed for the purposes of the course "Artificial Intelligence" during the 2022 year, it was created by myself and Manesiotis Thanasis. 
 
 The functionality of the environment was provided to us for the purposes of the project. It is similar to conventional chess, but is modified to different functionality, it uses the dimensions of 5x7 it generates random prizes, has special rules, such as 4 second time restriction per move.
 
