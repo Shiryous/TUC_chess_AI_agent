@@ -8,15 +8,44 @@ There are 2 different approaches on the way the agent makes desicions.
 The first one is using the Min-Max algorithm with an extension of alpha beta pruning, to reduce the search space and enable it to search deeper inside the tree structure.
 
 The second game playing logic was created by implementing the algorithm of Monte Carlo Tree search with an Upper Confidence bound.
-<H2> Pieces </H2>
+<H2> Board and Pieces</H2>
+
 The pieces found in this special chess are the following:
 
-- ![image info](./chess/king_black.gif), ![image info](./chess/king_white.gif) A king for = 8 points 
-- ![image info](./chess/pawn_black.gif) ![image info](./chess/pawn_white.gif) 7 pawns worth = 1 point each 
+- ![image info](./chess/king_black.gif), ![image info](./chess/king_white.gif) A king = 8 points 
+- ![image info](./chess/pawn_black.gif) ![image info](./chess/pawn_white.gif) 7 pawns = 1 point each 
 - ![image info](./chess/rook_black.gif) ![image info](./chess/rook_white.gif) 2 rooks = 3 points each
 - ![image info](./chess/prize.png) and prizes, that are neutral = 1 point each
 
-<H2> Rules of TUC chess </H2>
-The special chess board found in this game is made of 7 rows and 5 columns.
+The starting position of all the pieces is present in the image below:
+![image info](./chess/board.png)
+
+<H2>Rules of the Game</H2>
+As with classical chess, this is also turn based and following the tradition of chess, the white player plays the first move.
+
+<H3>Winning condition:</H3>
+The winner at the end of the game is the one with the most points. 
+
+
+Every game ends when:
+- A king is captured
+- There are no other pieces except the two kings
+- The pre-defined time limit is reached
+
+A player can gather points by:
+- **Capturing enemy pieces:** Capturing an enemy piece gives points equal to their value. 
+- **Collecting prizes:** Collecting a prize gives 1 point with 95% propability, and 0 points otherwise.
+- **A pawn reaches the end of the board:**
+
+Prizes appear randomly after a players moves a piece on the board. 
+
+Movement of the pieces:
+- **Kings**: Move 1 square to any direction 
+- **Pawns**: Move 1 square only towards the opposing side
+    - Vertically when there is an empty square or a prize and
+    - Diagonally by capturing an enemy piece
+- **Rooks**: Move at most 3 squares horizontally or vertically
+
 
 <H2> Installation </H2>
+Download the .zip file in order to get the components, and play with the parameters.
