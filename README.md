@@ -14,8 +14,9 @@ The pieces found in this special chess are the following:
 - ![image info](./chess/king_black.gif), ![image info](./chess/king_white.gif) A king for = 8 points 
 - ![image info](./chess/pawn_black.gif) ![image info](./chess/pawn_white.gif) 7 pawns worth = 1 point each 
 - ![image info](./chess/rook_black.gif) ![image info](./chess/rook_white.gif) 2 rooks = 3 points each
-- ![image info](./chess/prize.png) and prizes, that are neutral
+- ![image info](./chess/prize.png) and prizes, that are neutral = 1 point each
 
 <H2> Rules of TUC chess </H2>
 The special chess board found in this game is made of 7 rows and 5 columns.
+
 <H2> Installation </H2>
