@@ -58,7 +58,7 @@ public class Client
 		world = new World();
 	}
 	
-	private void sendName()
+	public void sendName()
 	{
 		// add your name here, remove comment below
 		// myName = "your_name"
@@ -250,8 +250,8 @@ public class Client
 		Client client = new Client();
 		
 		// optionally adding delay to response
-		if(args.length == 1)
-			client.delay = Integer.parseInt(args[0]);
+		//if(args.length == 1)
+		//	client.delay = Integer.parseInt(args[0]);
 		
 		// send the first message - my name
 		client.sendName();
