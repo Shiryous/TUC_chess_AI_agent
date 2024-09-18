@@ -98,8 +98,12 @@ public class World
 		nBranches += availableMoves.size();
 
 		//return  this.UCTSearch();
-		//return this.selectMinmax(5, true);
-		return this.selectRandomAction();
+		if (myColor == 0){
+			return this.selectMinmax(5, true);
+		}
+		else{
+			return this.selectRandomAction();
+		}
 	}
 	/**
 	 * This function is used to find the available moves for black
@@ -539,7 +543,7 @@ public class World
 	
 	private String selectMinmax(int depth, boolean ab_On){
 		double start = System.currentTimeMillis();
-;		String best_move = new String();
+		String best_move = new String();
 		double max = -inf;
 		double min = inf;
 		int max_depth = depth;
