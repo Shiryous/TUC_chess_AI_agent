@@ -192,7 +192,7 @@ public class Board extends JFrame
 	
 	private void setSidePanels()
 	{	
-		Font font = new Font("Times New Roman", Font.PLAIN, 18);
+		Font font = new Font("Times New Roman", Font.PLAIN, 20);
 		
 		// setting westPanel
 		westPanel = new JPanel();

@@ -19,7 +19,7 @@ public class setupWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set the size of the window (width, height)
-        int frameWidth = 500;
+        int frameWidth = 400;
         int frameHeight = 500;
         frame.setSize(frameWidth, frameHeight);
 
@@ -28,13 +28,14 @@ public class setupWindow {
         frame.add(label);
 
         // Create a JButton (button)
-        JButton serverButton = new JButton("Start a game");        
+        JButton serverButton = new JButton("Start a new game");        
         JButton client1Button = new JButton("Player 1");        
         JButton client2Button = new JButton("Player 2");    
 
         serverButton.setPreferredSize(new Dimension(200, 100)); // Width: 200, Height: 100
         client1Button.setPreferredSize(new Dimension(200, 100)); // Width: 200, Height: 100
         client2Button.setPreferredSize(new Dimension(200, 100)); // Width: 200, Height: 100
+
         // Add an action listener to the button
         serverButton.addActionListener(new ActionListener() {
             @Override
