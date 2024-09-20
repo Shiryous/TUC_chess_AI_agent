@@ -19,7 +19,7 @@ public class Client
 	private DatagramPacket receivePacket = null;
 	private InetAddress host = null;
 	
-	private String myName = "Player";
+	private String myName;
 	// private int counterMsg = 0;		optional use
 	private String receivedMsg = "";
 	private int myColor = 0;
@@ -28,7 +28,7 @@ public class Client
 	private int scoreBlack = 0;
 	private int delay = 1000;		// never set it to 0
 	
-	public Client()
+	public Client(String playerName)
 	{
 		// initialization of the fields
 		try
@@ -48,6 +48,7 @@ public class Client
 			// print the occurred exception
 			System.out.println(e.getClass().getName() + " : " + e.getMessage());
 		}
+		this.myName = playerName;
 		
 		// add a random number from 0 to 19 at the end of the name
 		Random ran = new Random();
@@ -60,9 +61,6 @@ public class Client
 	
 	public void sendName()
 	{
-		// add your name here, remove comment below
-		// myName = "your_name"
-		
 		try
 		{
 			// turn my name into bytes
@@ -247,7 +245,7 @@ public class Client
 	// testing
 	public static void main(String[] args)
 	{
-		Client client = new Client();
+		Client client = new Client(args[0]);
 		
 		// optionally adding delay to response
 		//if(args.length == 1)
