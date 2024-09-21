@@ -121,7 +121,7 @@ public class setupWindow {
                 JPanel subPanel = (JPanel) comp;
                 for (Component comp1 : subPanel.getComponents()){
                     if (comp1 instanceof JComboBox){
-                        JComboBox<String> dropdown = (JComboBox) comp1;
+                        JComboBox<String> dropdown = (JComboBox<String>) comp1;
                         System.out.println( (String) dropdown.getSelectedItem());
                         playerParameters[1] = (String) dropdown.getSelectedItem();
                     }
