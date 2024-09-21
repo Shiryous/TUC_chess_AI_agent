@@ -98,7 +98,7 @@ public class World
 		nBranches += availableMoves.size();
 
 		if (logic.equals("Min-Max")){
-			return this.selectMinmax(5, true);
+			return this.selectMinmax(7, true);
 		}
 		else if(logic.equals("MCTS")){
 			return this.UCTSearch();
@@ -651,9 +651,7 @@ public class World
 				if (beta <= alpha) {
 					break;
 				}
-			}
-
-			
+			}			
 		}
 
 		return max;
