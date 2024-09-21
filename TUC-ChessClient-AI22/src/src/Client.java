@@ -20,6 +20,7 @@ public class Client
 	private InetAddress host = null;
 	
 	private String myName;
+	private String agentLogic;
 	// private int counterMsg = 0;		optional use
 	private String receivedMsg = "";
 	private int myColor = 0;
@@ -28,7 +29,7 @@ public class Client
 	private int scoreBlack = 0;
 	private int delay = 1000;		// never set it to 0
 	
-	public Client(String playerName)
+	public Client(String playerName, String agentLogic)
 	{
 		// initialization of the fields
 		try
@@ -49,7 +50,7 @@ public class Client
 			System.out.println(e.getClass().getName() + " : " + e.getMessage());
 		}
 		this.myName = playerName;
-		
+		this.agentLogic = agentLogic;
 		// add a random number from 0 to 19 at the end of the name
 		Random ran = new Random();
 		int x = ran.nextInt(20);
@@ -119,7 +120,7 @@ public class Client
 						// beginning of the game
 						if(myColor == 0)
 						{
-							String action = world.selectAction(this.getScoreWhite(),this.getScoreBlack());
+							String action = world.selectAction(this.getScoreWhite(), this.getScoreBlack(), this.agentLogic);
 							
 							try
 							{
@@ -199,7 +200,7 @@ public class Client
 					
 					if(nextPlayer==myColor)
 					{
-						String action = world.selectAction(this.getScoreWhite(),this.getScoreBlack());
+						String action = world.selectAction(this.getScoreWhite(),this.getScoreBlack(), this.agentLogic);
 						
 						try
 						{
@@ -245,7 +246,7 @@ public class Client
 	// testing
 	public static void main(String[] args)
 	{
-		Client client = new Client(args[0]);
+		Client client = new Client(args[0], args[1]);
 		
 		// optionally adding delay to response
 		//if(args.length == 1)

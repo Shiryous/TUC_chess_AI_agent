@@ -81,7 +81,7 @@ public class World
 		this.myColor = myColor;
 	}
 	
-	public String selectAction(int score_white,int score_black)
+	public String selectAction(int score_white, int score_black, String logic)
 	{
 		this.score_white = score_white;
 		this.score_black = score_black;
@@ -97,9 +97,11 @@ public class World
 		nTurns++;
 		nBranches += availableMoves.size();
 
-		//return  this.UCTSearch();
-		if (myColor == 0){
+		if (logic.equals("Min-Max")){
 			return this.selectMinmax(5, true);
+		}
+		else if(logic.equals("MCTS")){
+			return this.UCTSearch();
 		}
 		else{
 			return this.selectRandomAction();

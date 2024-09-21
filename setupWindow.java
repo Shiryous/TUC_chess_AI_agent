@@ -19,9 +19,11 @@ public class setupWindow {
         String[] agentOptions = {"Random", "Min-Max", "MCTS"};
         // Add components to the frame
         frame.add(createWelcomeLabel(frame));
-        frame.add(createPlayerInput("White Player:", "Jane_Doe", agentOptions));
-        frame.add(createPlayerInput("Black Player:", "John_Doe", agentOptions));
-        frame.add(createButtons());
+        JPanel whitePanel = createPlayerInput("White Player:", "Jane_Doe", agentOptions);
+        JPanel blackPanel = createPlayerInput("Black Player:", "John_Doe", agentOptions);
+        frame.add(whitePanel);
+        frame.add(blackPanel);
+        frame.add(createButtons(whitePanel, blackPanel));
 
         // Display the window
         frame.setLocationRelativeTo(null);  // Center the window
@@ -55,7 +57,7 @@ public class setupWindow {
     private static JPanel createDropdownMenu(String[] options) {
         JPanel panel = new JPanel();
         JComboBox<String> dropdown = new JComboBox<>(options);
-        JLabel selectedLabel = new JLabel("Select an option from the dropdown");
+        JLabel selectedLabel = new JLabel("Select the logic of the agent");
 
         dropdown.addActionListener(e -> {
             String selectedOption = (String) dropdown.getSelectedItem();
@@ -68,7 +70,7 @@ public class setupWindow {
     }
 
     // Create buttons and add action listeners
-    private static JPanel createButtons() {
+    private static JPanel createButtons(JPanel whitePanel, JPanel blackPanel) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 3, 10, 10));  // 3 rows, 1 column, 10px padding
 
@@ -87,12 +89,14 @@ public class setupWindow {
         });
 
         client1Button.addActionListener(e -> {
-            startClientTask("Player 1", "Random");
+            String[] whitePlayerParams = getplayerPrefFromPanel(whitePanel);
+            startClientTask(whitePlayerParams[0]+whitePlayerParams[1], whitePlayerParams[1]);
             client1Button.setEnabled(false);
         });
 
-        client2Button.addActionListener(e -> {
-            startClientTask("Player 2", "Random");
+        client2Button.addActionListener(e -> {            
+            String[] blackPlayerParams = getplayerPrefFromPanel(blackPanel);
+            startClientTask(blackPlayerParams[0]+blackPlayerParams[1], blackPlayerParams[1]);
             client2Button.setEnabled(false);
         });
 
@@ -100,6 +104,31 @@ public class setupWindow {
         panel.add(client1Button);
         panel.add(client2Button);
         return panel;
+    }
+
+    // Function to get text from a JTextField inside the passed JPanel
+    public static String[] getplayerPrefFromPanel(JPanel panel) {
+        String[] playerParameters = {"No-Name", "Random"};
+        // Get all components in the panel
+        for (Component comp : panel.getComponents()) {
+            // Check if the component is an instance of JTextField
+            if (comp instanceof JTextField) {
+                // Cast the component to JTextField and get the text
+                JTextField textField = (JTextField) comp;
+                playerParameters[0] = textField.getText();
+            }
+            else if(comp instanceof JPanel){
+                JPanel subPanel = (JPanel) comp;
+                for (Component comp1 : subPanel.getComponents()){
+                    if (comp1 instanceof JComboBox){
+                        JComboBox<String> dropdown = (JComboBox) comp1;
+                        System.out.println( (String) dropdown.getSelectedItem());
+                        playerParameters[1] = (String) dropdown.getSelectedItem();
+                    }
+                }
+            }
+        }
+        return playerParameters;
     }
 
     // Method to start a new server instance
@@ -134,7 +163,7 @@ class TaskStart implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(threadName + " is running with method "+ agent);
+        System.out.println(threadName + " is running:");
         if ("Server".equals(threadName)) {
             UDPServer.main(null);
         } else {
