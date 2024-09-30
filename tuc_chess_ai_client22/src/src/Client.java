@@ -11,50 +11,51 @@ import java.util.Random;
 public class Client
 {
 	private static final int PORTServer = 9876;
-	private DatagramSocket clientSocket = null;
-	private byte[] sendData = null;
-	private byte[] receiveData = null;
+	private DatagramSocket client_socket = null;
+	private byte[] send_data = null;
+	private byte[] receive_data = null;
 	private int size = 200;
-	private DatagramPacket sendPacket = null;
-	private DatagramPacket receivePacket = null;
+	private DatagramPacket send_packet = null;
+	private DatagramPacket receive_packet = null;
 	private InetAddress host = null;
 	
-	private String myName;
-	private String agentLogic;
+	private String my_name;
+	private String agent_logic;
 	// private int counterMsg = 0;		optional use
-	private String receivedMsg = "";
-	private int myColor = 0;
+	private String received_messages = "";
+	private int my_color = 0;
 	private World world = null;
-	private int scoreWhite = 0;
-	private int scoreBlack = 0;
+	private int score_white = 0;
+	private int score_black = 0;
 	private int delay = 1000;		// never set it to 0
 	
-	public Client(String playerName, String agentLogic)
+	public Client(String player_name, String agent_logic)
 	{
 		// initialization of the fields
 		try
 		{
-			clientSocket = new DatagramSocket();
+			client_socket = new DatagramSocket();
 			
-			sendData = new byte[size];
-			receiveData = new byte[size];
+			send_data = new byte[size];
+			receive_data = new byte[size];
 			
 			host = InetAddress.getLocalHost();
 			
-			receivePacket = new DatagramPacket(receiveData, receiveData.length);
-			sendPacket = new DatagramPacket(sendData, sendData.length, host, PORTServer);
+			receive_packet = new DatagramPacket(receive_data, receive_data.length);
+			send_packet = new DatagramPacket(send_data, send_data.length, host, PORTServer);
 		}
 		catch(SocketException | UnknownHostException e)
 		{
 			// print the occurred exception
 			System.out.println(e.getClass().getName() + " : " + e.getMessage());
 		}
-		this.myName = playerName;
-		this.agentLogic = agentLogic;
+		this.my_name = player_name;
+		this.agent_logic = agent_logic;
+
 		// add a random number from 0 to 19 at the end of the name
-		Random ran = new Random();
-		int x = ran.nextInt(20);
-		myName += x;
+		Random random = new Random();
+		int x = random.nextInt(20);
+		my_name += x;
 		
 		// create the world of the game
 		world = new World();
@@ -65,10 +66,10 @@ public class Client
 		try
 		{
 			// turn my name into bytes
-			sendData = myName.getBytes("UTF-8");
-			sendPacket.setData(sendData);
-			sendPacket.setLength(sendData.length);
-			clientSocket.send(sendPacket);
+			send_data = my_name.getBytes("UTF-8");
+			send_packet.setData(send_data);
+			send_packet.setLength(send_data.length);
+			client_socket.send(send_packet);
 		}
 		catch(IOException e)
 		{
@@ -85,42 +86,42 @@ public class Client
 			try
 			{
 				// waiting for a message from the server
-				clientSocket.receive(receivePacket);
+				client_socket.receive(receive_packet);
 				
 				// counterMsg++;
 				
 				// get the String of the message
 				// no need to check for IPAddress and Port of sender, it must be the server of TUC-CHESS
-				receivedMsg = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
+				received_messages = new String(receive_packet.getData(), 0, receive_packet.getLength(), "UTF-8");
 				
-				System.out.println("Received message from server : " + receivedMsg);
+				System.out.println("Received message from server : " + received_messages);
 				
 				// get the first letter of the String
-				String firstLetter = Character.toString(receivedMsg.charAt(0));
+				String firstLetter = Character.toString(received_messages.charAt(0));
 				
 				if(firstLetter.equals("P"))		// received information is about my colour
 				{
 					// get the second letter of the String
-					String secondLetter = Character.toString(receivedMsg.charAt(1));
+					String secondLetter = Character.toString(received_messages.charAt(1));
 					
 					if(secondLetter.equals("W"))
-						myColor = 0;
+						my_color = 0;
 					else
-						myColor = 1;
+						my_color = 1;
 					
-					world.setMyColor(myColor);
+					world.setMyColor(my_color);
 				}				
 				else if(firstLetter.equals("G"))	// received information is about the game (begin/end)
 				{
 					// get the second letter of the String
-					String secondLetter = Character.toString(receivedMsg.charAt(1));
+					String secondLetter = Character.toString(received_messages.charAt(1));
 					
 					if(secondLetter.equals("B"))
 					{
 						// beginning of the game
-						if(myColor == 0)
+						if(my_color == 0)
 						{
-							String action = world.selectAction(this.getScoreWhite(), this.getScoreBlack(), this.agentLogic);
+							String action = world.selectAction(this.getScore_white(), this.getScore_black(), this.agent_logic);
 							
 							try
 							{
@@ -134,42 +135,42 @@ public class Client
 								System.out.println(e.getClass().getName() + " : " + e.getMessage());
 							}
 							
-							sendData = action.getBytes("UTF-8");
-							sendPacket.setData(sendData);
-							sendPacket.setLength(sendData.length);
-							clientSocket.send(sendPacket);
+							send_data = action.getBytes("UTF-8");
+							send_packet.setData(send_data);
+							send_packet.setLength(send_data.length);
+							client_socket.send(send_packet);
 						}
 						else
 							continue;
 					}
 					else	// secondLetter.equals("E") - the game has ended
 					{
-						scoreWhite = Integer.parseInt(Character.toString(receivedMsg.charAt(2))
-								                    + Character.toString(receivedMsg.charAt(3)));
+						score_white = Integer.parseInt(Character.toString(received_messages.charAt(2))
+								                    + Character.toString(received_messages.charAt(3)));
 						
-						scoreBlack = Integer.parseInt(Character.toString(receivedMsg.charAt(4))
-						                            + Character.toString(receivedMsg.charAt(5)));
+						score_black = Integer.parseInt(Character.toString(received_messages.charAt(4))
+						                            + Character.toString(received_messages.charAt(5)));
 						
-						if(scoreWhite - scoreBlack > 0)
+						if(score_white - score_black > 0)
 						{
-							if(myColor == 0)
-								System.out.println("I won! " + scoreWhite + "-" + scoreBlack);
+							if(my_color == 0)
+								System.out.println("I won! " + score_white + "-" + score_black);
 							else
-								System.out.println("I lost. " + scoreWhite + "-" + scoreBlack);
+								System.out.println("I lost. " + score_white + "-" + score_black);
 							
 							System.out.println("My average branch factor was : " + world.getAvgBFactor());
 						}
-						else if(scoreWhite - scoreBlack < 0)
+						else if(score_white - score_black < 0)
 						{
-							if(myColor == 0)
-								System.out.println("I lost. " + scoreWhite + "-" + scoreBlack);
+							if(my_color == 0)
+								System.out.println("I lost. " + score_white + "-" + score_black);
 							else
-								System.out.println("I won! " + scoreWhite + "-" + scoreBlack);
+								System.out.println("I won! " + score_white + "-" + score_black);
 							System.out.println("My average branch factor was : " + world.getAvgBFactor());
 						}
 						else
 						{
-							System.out.println("It is a draw! " + scoreWhite + "-" + scoreBlack);
+							System.out.println("It is a draw! " + score_white + "-" + score_black);
 							
 							System.out.println("My average branch factor was : " + world.getAvgBFactor());
 						}
@@ -180,27 +181,27 @@ public class Client
 				else	// firstLetter.equals("T") - a move has been made
 				{
 					// decode the rest of the message
-					int nextPlayer = Integer.parseInt(Character.toString(receivedMsg.charAt(1)));
+					int nextPlayer = Integer.parseInt(Character.toString(received_messages.charAt(1)));
 					
-					int x1 = Integer.parseInt(Character.toString(receivedMsg.charAt(2)));
-					int y1 = Integer.parseInt(Character.toString(receivedMsg.charAt(3)));
-					int x2 = Integer.parseInt(Character.toString(receivedMsg.charAt(4)));
-					int y2 = Integer.parseInt(Character.toString(receivedMsg.charAt(5)));
+					int x1 = Integer.parseInt(Character.toString(received_messages.charAt(2)));
+					int y1 = Integer.parseInt(Character.toString(received_messages.charAt(3)));
+					int x2 = Integer.parseInt(Character.toString(received_messages.charAt(4)));
+					int y2 = Integer.parseInt(Character.toString(received_messages.charAt(5)));
 					
-					int prizeX = Integer.parseInt(Character.toString(receivedMsg.charAt(6)));
-					int prizeY = Integer.parseInt(Character.toString(receivedMsg.charAt(7)));
+					int prizeX = Integer.parseInt(Character.toString(received_messages.charAt(6)));
+					int prizeY = Integer.parseInt(Character.toString(received_messages.charAt(7)));
 					
-					scoreWhite = Integer.parseInt(Character.toString(receivedMsg.charAt(8)) 
-							                      + Character.toString(receivedMsg.charAt(9)));
+					score_white = Integer.parseInt(Character.toString(received_messages.charAt(8)) 
+							                      + Character.toString(received_messages.charAt(9)));
 					
-					scoreBlack = Integer.parseInt(Character.toString(receivedMsg.charAt(10)) 
-												  + Character.toString(receivedMsg.charAt(11)));
+					score_black = Integer.parseInt(Character.toString(received_messages.charAt(10)) 
+												  + Character.toString(received_messages.charAt(11)));
 					
 					world.makeMove(x1,y1,x2,y2,prizeX,prizeY);
 					
-					if(nextPlayer==myColor)
+					if(nextPlayer==my_color)
 					{
-						String action = world.selectAction(this.getScoreWhite(),this.getScoreBlack(), this.agentLogic);
+						String action = world.selectAction(this.getScore_white(),this.getScore_black(), this.agent_logic);
 						
 						try
 						{
@@ -214,10 +215,10 @@ public class Client
 							System.out.println(e.getClass().getName() + " : " + e.getMessage());
 						}
 						
-						sendData = action.getBytes("UTF-8");
-						sendPacket.setData(sendData);
-						sendPacket.setLength(sendData.length);
-						clientSocket.send(sendPacket);			
+						send_data = action.getBytes("UTF-8");
+						send_packet.setData(send_data);
+						send_packet.setLength(send_data.length);
+						client_socket.send(send_packet);			
 					}
 					else
 					{
@@ -233,14 +234,14 @@ public class Client
 		}
 	}
 	
-	public int getScoreWhite()
+	public int getScore_white()
 	{
-		return scoreWhite;
+		return score_white;
 	}
 	
-	public int getScoreBlack()
+	public int getScore_black()
 	{
-		return scoreBlack;
+		return score_black;
 	}
 	
 	// testing
