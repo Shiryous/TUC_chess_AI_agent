@@ -1,10 +1,10 @@
-import src.Client;  // Assuming this import is correct in your environment
+import tuc_chess_ai_client22.src.src.Client;
 import javax.swing.*;
 import java.awt.*;
 
 public class setupWindow {
 
-    public static void main(String[] args) {
+    public final static void main(String[] args) {
         int fontSize = 18;
         // Create and configure the main frame (window)
         JFrame frame = new JFrame("Chess Setup");

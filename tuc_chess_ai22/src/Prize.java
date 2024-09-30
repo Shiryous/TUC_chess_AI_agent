@@ -9,7 +9,7 @@ public class Prize
 	
 	public Prize()
 	{
-		img =  new ImageIcon("chess/prize.png");
+		img =  new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/prize.png");
 		
 		// valueChance == 0.8
 		if(Math.random() > Board.getValueChance())
@@ -18,14 +18,8 @@ public class Prize
 			value = maxVal;	
 	}
 	
-	public ImageIcon getIcon()
-	{
-		return img;
-	}
+	public ImageIcon getIcon()	{	return img;	}
 	
-	public int getValue()
-	{
-		return value;
-	}
+	public int getValue()	{	return value;	}
 
 }
