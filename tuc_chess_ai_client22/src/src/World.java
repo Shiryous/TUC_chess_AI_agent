@@ -20,6 +20,9 @@ public class World
 
 	public World()
 	{
+		assert rows % 2 == 1 : "Row number is even";
+		assert columns % 2 == 1 : "Column number is even";
+
 		board = new String[rows][columns];
 		
 		/* represent the board

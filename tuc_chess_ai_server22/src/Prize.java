@@ -9,7 +9,7 @@ public class Prize
 	
 	public Prize()
 	{
-		img =  new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/prize.png");
+		img =  new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/prize.png");
 		
 		// valueChance == 0.8
 		if(Math.random() > Board.getValueChance())

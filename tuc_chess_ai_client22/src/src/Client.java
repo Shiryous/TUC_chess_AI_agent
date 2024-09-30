@@ -234,15 +234,9 @@ public class Client
 		}
 	}
 	
-	public int getScore_white()
-	{
-		return score_white;
-	}
+	public int getScore_white()	{	return score_white;	}
 	
-	public int getScore_black()
-	{
-		return score_black;
-	}
+	public int getScore_black()	{	return score_black;	}
 	
 	// testing
 	public static void main(String[] args)

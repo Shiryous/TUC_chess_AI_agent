@@ -75,8 +75,8 @@ public class Board extends JFrame
 		gbc.insets = new Insets(1,1,1,1);
 		gbc.fill = GridBagConstraints.BOTH;
 		
-		ImageIcon iconWhite = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/white.gif");
-		ImageIcon iconBlack = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/black.gif");
+		ImageIcon iconWhite = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/white.gif");
+		ImageIcon iconBlack = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/black.gif");
 		
 		for(int i=0; i<rows; i++)
 			for(int j=0; j<columns; j++)
@@ -124,9 +124,9 @@ public class Board extends JFrame
 	private void setChessParts()
 	{
 		// setting the white ChessParts
-		ImageIcon whitePawn = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/pawn_white.gif");
-		ImageIcon whiteRook = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/rook_white.gif");
-		ImageIcon whiteKing = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/king_white.gif");
+		ImageIcon whitePawn = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/pawn_white.gif");
+		ImageIcon whiteRook = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/rook_white.gif");
+		ImageIcon whiteKing = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/king_white.gif");
 		
 		// creating the white pawns
 		for(int j=0; j<columns; j++)
@@ -153,9 +153,9 @@ public class Board extends JFrame
 		//-------------------------------------------------------------
 		
 		// setting the black ChessParts
-		ImageIcon blackPawn = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/pawn_black.gif");
-		ImageIcon blackRook = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/rook_black.gif");
-		ImageIcon blackKing = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/king_black.gif");
+		ImageIcon blackPawn = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/pawn_black.gif");
+		ImageIcon blackRook = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/rook_black.gif");
+		ImageIcon blackKing = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/king_black.gif");
 		
 		// creating the black pawns
 		for(int j=0; j<columns; j++)

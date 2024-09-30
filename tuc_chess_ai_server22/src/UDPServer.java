@@ -1,11 +1,13 @@
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.BufferedWriter;
+
+import java.net.InetAddress;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
+
 import java.time.LocalDateTime;
 
 /*
@@ -34,7 +36,7 @@ public class UDPServer
 	private String nameBlack = "";
 	public static int scoreWhite = 0;
 	public static int scoreBlack = 0;
-	private final String filename = "scores.log";
+	private final String filename = "TUC_chess_AI_agent/scores.log";
 	private static boolean closeOnTermination = false;
 	
 	public UDPServer()
