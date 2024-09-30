@@ -1,6 +1,5 @@
 package tuc_chess_ai_client22.src.src;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 
@@ -17,6 +16,7 @@ public class World
 	private int noPrize = 9;
 	private double inf = Double.POSITIVE_INFINITY;
 	private int score_white, score_black;
+	
 	public World()
 	{
 		board = new String[rows][columns];
