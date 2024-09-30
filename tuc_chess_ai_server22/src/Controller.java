@@ -42,12 +42,12 @@ public class Controller
 			return false;
 			
 		// check if the chess part at the starting belongs to the proper player
-		int legalPlayer = board.getChessLabel()[x1][y1].getCp().getPlayer();
+		int legalPlayer = board.getChessLabel()[x1][y1].getChess_part().getPlayer();
 		
 		if(legalPlayer != player)
 			return false;
 		
-		ChessPart cp = board.getChessLabel()[x1][y1].getCp();
+		ChessPart cp = board.getChessLabel()[x1][y1].getChess_part();
 		
 		if(legalPlayer == white)		// it is the white player who sent the action
 		{
@@ -87,19 +87,19 @@ public class Controller
 		if( (x1 == (x2+1)) && (y1==y2) && (board.getChessLabel()[x2][y2].getEmpty()) )
 		{
 			this.checkPrize(x2, y2, white);
-			board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+			board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 			board.getChessLabel()[x1][y1].removeCp();
 			return true;
 		}
 		
 		// check if it can check if it can move crosswise to the left (cannot move on a bonus)
 		if( (x1 == (x2+1)) && (y1 == (y2+1)) && (!board.getChessLabel()[x2][y2].getEmpty()) 
-			 && (board.getChessLabel()[x2][y2].getCp().getPlayer() == black) )
+			 && (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == black) )
 		{
-			int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+			int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 			this.addPoints(white, points);
 			
-			if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+			if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 				nKings--;
 			else
 				nChessParts--;
@@ -114,7 +114,7 @@ public class Controller
 			}
 			else
 			{
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;			
 			}	
@@ -122,12 +122,12 @@ public class Controller
 		
 		// check if it can move crosswise to the right (cannot move on a bonus)
 		if( (x1 == (x2+1)) && (y1 == (y2-1)) && (!board.getChessLabel()[x2][y2].getEmpty())  
-			 && (board.getChessLabel()[x2][y2].getCp().getPlayer() == black) )
+			 && (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == black) )
 		{
-			int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+			int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 			this.addPoints(white, points);
 			
-			if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+			if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 				nKings--;
 			else
 				nChessParts--;
@@ -142,7 +142,7 @@ public class Controller
 			}
 			else
 			{
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;			
 			}	
@@ -163,7 +163,7 @@ public class Controller
 			
 			// if there is a white chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1-(i+1)][y1].getEmpty() 
-				&& board.getChessLabel()[x1-(i+1)][y1].getCp().getPlayer() == white)
+				&& board.getChessLabel()[x1-(i+1)][y1].getChess_part().getPlayer() == white)
 			{
 				break;
 			}
@@ -171,24 +171,24 @@ public class Controller
 			if( (x1-(i+1) == x2) && (y1==y2) )
 			{	
 				if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-					&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == black) )
+					&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == black) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(white, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, white);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -201,7 +201,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second now
 			// by detouring the first one
 			if( (x1-(i+2) >= 0) && (!board.getChessLabel()[x1-(i+1)][y1].getEmpty()
-								     || board.getChessLabel()[x1-(i+1)][y1].getHasPrize()) )
+								     || board.getChessLabel()[x1-(i+1)][y1].getHas_prize()) )
 				break;
 			
 		}
@@ -214,7 +214,7 @@ public class Controller
 			
 			// if there is a white chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1+(i+1)][y1].getEmpty() 
-				&& board.getChessLabel()[x1+(i+1)][y1].getCp().getPlayer() == white)
+				&& board.getChessLabel()[x1+(i+1)][y1].getChess_part().getPlayer() == white)
 			{
 				break;
 			}
@@ -222,24 +222,24 @@ public class Controller
 			if( (x1+(i+1) == x2) && (y1==y2) )
 			{
 				if( (!board.getChessLabel()[x2][y2].getEmpty())
-					&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == black) )
+					&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == black) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(white, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, white);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -252,7 +252,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second
 			// by detouring the first
 			if( (x1+(i+2) < rows) && (!board.getChessLabel()[x1+(i+1)][y1].getEmpty()
-									  || board.getChessLabel()[x1+(i+1)][y1].getHasPrize()) )
+									  || board.getChessLabel()[x1+(i+1)][y1].getHas_prize()) )
 				break;
 			
 		}
@@ -265,7 +265,7 @@ public class Controller
 			
 			// if there is a white chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1][y1-(i+1)].getEmpty() 
-				 && board.getChessLabel()[x1][y1-(i+1)].getCp().getPlayer() == white)
+				 && board.getChessLabel()[x1][y1-(i+1)].getChess_part().getPlayer() == white)
 			{
 				break;
 			}
@@ -273,24 +273,24 @@ public class Controller
 			if( (x1==x2) && ((y1-(i+1)) == y2))
 			{
 				if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-					&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == black) )
+					&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == black) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(white, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, white);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -303,7 +303,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second now
 			// by detouring the first one
 			if( (y1-(i+2) >= 0) && (!board.getChessLabel()[x1][y1-(i+1)].getEmpty()
-									 || board.getChessLabel()[x1][y1-(i+1)].getHasPrize()) )
+									 || board.getChessLabel()[x1][y1-(i+1)].getHas_prize()) )
 				break;
 
 		}
@@ -316,7 +316,7 @@ public class Controller
 			
 			// if there is a white chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1][y1+(i+1)].getEmpty() 
-				&& board.getChessLabel()[x1][y1+(i+1)].getCp().getPlayer() == white)
+				&& board.getChessLabel()[x1][y1+(i+1)].getChess_part().getPlayer() == white)
 			{
 				break;
 			}
@@ -324,24 +324,24 @@ public class Controller
 			if( (x1==x2) && ((y1+(i+1)) == y2))
 			{
 				if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-					&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == black) )
+					&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == black) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(white, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, white);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -354,7 +354,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second now
 			// by detouring the first one
 			if( (y1+(i+2) < columns) && (!board.getChessLabel()[x1][y1+(i+1)].getEmpty()
-										  || board.getChessLabel()[x1][y1+(i+1)].getHasPrize()) )
+										  || board.getChessLabel()[x1][y1+(i+1)].getHas_prize()) )
 				break;
 			
 		}
@@ -378,24 +378,24 @@ public class Controller
 		if(valid)
 		{
 			if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-				&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == black) )
+				&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == black) )
 			{
-				int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+				int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 				this.addPoints(white, points);
 				
-				if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+				if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 					nKings--;
 				else
 					nChessParts--;
 				
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;				
 			}
 			else if(board.getChessLabel()[x2][y2].getEmpty())
 			{
 				this.checkPrize(x2, y2, white);
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;
 			}
@@ -420,19 +420,19 @@ public class Controller
 		if( (x1 == (x2-1)) && (y2==y1) && (board.getChessLabel()[x2][y2].getEmpty()) )
 		{
 			this.checkPrize(x2, y2, black);
-			board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+			board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 			board.getChessLabel()[x1][y1].removeCp();
 			return true;
 		}
 		
 		// check if it can check if it can move crosswise to the left
 		if( (x1 == (x2-1)) && (y1 == (y2+1)) && (!board.getChessLabel()[x2][y2].getEmpty()) 
-			 && (board.getChessLabel()[x2][y2].getCp().getPlayer() == white) )
+			 && (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == white) )
 		{
-			int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+			int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 			this.addPoints(black, points);
 			
-			if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+			if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 				nKings--;
 			else
 				nChessParts--;
@@ -447,7 +447,7 @@ public class Controller
 			}
 			else
 			{
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;			
 			}	
@@ -455,12 +455,12 @@ public class Controller
 		
 		// check if it can move crosswise to the right
 		if( (x1 == (x2-1)) && (y1 == (y2-1)) && (!board.getChessLabel()[x2][y2].getEmpty())  
-			 && (board.getChessLabel()[x2][y2].getCp().getPlayer() == white) )
+			 && (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == white) )
 		{
-			int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+			int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 			this.addPoints(black, points);
 			
-			if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+			if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 				nKings--;
 			else
 				nChessParts--;
@@ -475,7 +475,7 @@ public class Controller
 			}
 			else
 			{
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;			
 			}
@@ -496,7 +496,7 @@ public class Controller
 			
 			// if there is a black chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1-(i+1)][y1].getEmpty() 
-				&& board.getChessLabel()[x1-(i+1)][y1].getCp().getPlayer() == black)
+				&& board.getChessLabel()[x1-(i+1)][y1].getChess_part().getPlayer() == black)
 			{	
 				break;
 			}
@@ -504,24 +504,24 @@ public class Controller
 			if( (x1-(i+1) == x2) && y1==y2 )
 			{
 				if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-					&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == white) )
+					&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == white) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(black, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, black);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -534,7 +534,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second now
 			// by detouring the first one
 			if( (x1-(i+2) >= 0) && (!board.getChessLabel()[x1-(i+1)][y1].getEmpty()
-								     || board.getChessLabel()[x1-(i+1)][y1].getHasPrize()) )
+								     || board.getChessLabel()[x1-(i+1)][y1].getHas_prize()) )
 				break;
 		}
 		
@@ -546,7 +546,7 @@ public class Controller
 			
 			// if there is a black chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1+(i+1)][y1].getEmpty() 
-					&& board.getChessLabel()[x1+(i+1)][y1].getCp().getPlayer() == black)
+					&& board.getChessLabel()[x1+(i+1)][y1].getChess_part().getPlayer() == black)
 			{	
 					break;
 			}
@@ -554,24 +554,24 @@ public class Controller
 			if( (x1+(i+1) == x2) && (y1==y2) )
 			{
 				if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-						&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == white) )
+						&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == white) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(black, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, black);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -584,7 +584,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second now
 			// by detouring the first one
 			if( (x1+(i+2) < rows) && (!board.getChessLabel()[x1+(i+1)][y1].getEmpty()
-									   || board.getChessLabel()[x1+(i+1)][y1].getHasPrize()) )
+									   || board.getChessLabel()[x1+(i+1)][y1].getHas_prize()) )
 				break;
 			
 		}
@@ -597,7 +597,7 @@ public class Controller
 			
 			// if there is a black chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1][y1-(i+1)].getEmpty() 
-					&& board.getChessLabel()[x1][y1-(i+1)].getCp().getPlayer() == black)
+					&& board.getChessLabel()[x1][y1-(i+1)].getChess_part().getPlayer() == black)
 			{	
 				break;
 			}
@@ -605,24 +605,24 @@ public class Controller
 			if( (x1==x2) && ((y1-(i+1)) == y2))
 			{
 				if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-						&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == white) )
+						&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == white) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(black, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, black);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -635,7 +635,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second now
 			// by detouring the first one
 			if( (y1-(i+2) >= 0) && (!board.getChessLabel()[x1][y1-(i+1)].getEmpty()
-		                             || board.getChessLabel()[x1][y1-(i+1)].getHasPrize()) )
+		                             || board.getChessLabel()[x1][y1-(i+1)].getHas_prize()) )
 				break;
 			
 		}
@@ -648,7 +648,7 @@ public class Controller
 			
 			// if there is a black chess part ahead do not keep on iterating
 			if(!board.getChessLabel()[x1][y1+(i+1)].getEmpty() 
-					&& board.getChessLabel()[x1][y1+(i+1)].getCp().getPlayer() == black)
+					&& board.getChessLabel()[x1][y1+(i+1)].getChess_part().getPlayer() == black)
 			{	
 				break;
 			}
@@ -656,24 +656,24 @@ public class Controller
 			if( (x1==x2) && ((y1+(i+1)) == y2))
 			{
 				if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-					&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == white) )
+					&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == white) )
 				{
-					int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+					int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 					this.addPoints(black, points);
 					
-					if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+					if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 						nKings--;
 					else
 						nChessParts--;
 					
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
 				else if(board.getChessLabel()[x2][y2].getEmpty())
 				{
 					this.checkPrize(x2, y2, black);
-					board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+					board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 					board.getChessLabel()[x1][y1].removeCp();
 					return true;
 				}
@@ -686,7 +686,7 @@ public class Controller
 			// in case that there are two chess parts ahead it is not legal to attack the second now
 			// by detouring the first one
 			if( (y1+(i+2) < columns) && (!board.getChessLabel()[x1][y1+(i+1)].getEmpty()
-										  || board.getChessLabel()[x1][y1+(i+1)].getHasPrize()) )
+										  || board.getChessLabel()[x1][y1+(i+1)].getHas_prize()) )
 				break;
 						
 		}
@@ -710,24 +710,24 @@ public class Controller
 		if(valid)
 		{
 			if( (!board.getChessLabel()[x2][y2].getEmpty()) 
-				&& (board.getChessLabel()[x2][y2].getCp().getPlayer() == white) )
+				&& (board.getChessLabel()[x2][y2].getChess_part().getPlayer() == white) )
 			{
-				int points = board.getChessLabel()[x2][y2].getCp().getPoints();
+				int points = board.getChessLabel()[x2][y2].getChess_part().getPoints();
 				this.addPoints(black, points);
 				
-				if(board.getChessLabel()[x2][y2].getCp() instanceof King)
+				if(board.getChessLabel()[x2][y2].getChess_part() instanceof King)
 					nKings--;
 				else
 					nChessParts--;
 				
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;				
 			}
 			else if(board.getChessLabel()[x2][y2].getEmpty())
 			{
 				this.checkPrize(x2, y2, black);
-				board.getChessLabel()[x2][y2].setCp(board.getChessLabel()[x1][y1].getCp());
+				board.getChessLabel()[x2][y2].setChess_part(board.getChessLabel()[x1][y1].getChess_part());
 				board.getChessLabel()[x1][y1].removeCp();
 				return true;
 			}
@@ -759,7 +759,7 @@ public class Controller
 	
 	private void checkPrize(int x, int y, int player)
 	{
-		if(board.getChessLabel()[x][y].getHasPrize())
+		if(board.getChessLabel()[x][y].getHas_prize())
 		{
 			this.addPoints(player, board.getChessLabel()[x][y].getPrize().getValue());
 			board.getChessLabel()[x][y].removePrize();

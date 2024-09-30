@@ -95,26 +95,26 @@ public class Board extends JFrame
 					{
 						cl[i][j].setBackground(Color.WHITE);
 						cl[i][j].setIcon(iconWhite);
-						cl[i][j].setStandardIcon(iconWhite);
+						cl[i][j].setStandard_icon(iconWhite);
 					}
 					else
 					{
 						cl[i][j].setBackground(Color.BLACK);
 						cl[i][j].setIcon(iconBlack);
-						cl[i][j].setStandardIcon(iconBlack);
+						cl[i][j].setStandard_icon(iconBlack);
 					}
 				else // i%2 == 1
 					if(j%2 == 0)
 					{
 						cl[i][j].setBackground(Color.BLACK);
 						cl[i][j].setIcon(iconBlack);
-						cl[i][j].setStandardIcon(iconBlack);
+						cl[i][j].setStandard_icon(iconBlack);
 					}
 					else
 					{
 						cl[i][j].setBackground(Color.WHITE);
 						cl[i][j].setIcon(iconWhite);
-						cl[i][j].setStandardIcon(iconWhite);
+						cl[i][j].setStandard_icon(iconWhite);
 					}
 			}
 		
@@ -131,24 +131,24 @@ public class Board extends JFrame
 		// creating the white pawns
 		for(int j=0; j<columns; j++)
 		{
-			cl[rows-2][j].setCp(new Pawn(white, whitePawn));
-			cl[rows-2][j].setIcon(cl[rows-2][j].getCp().getIcon());
+			cl[rows-2][j].setChess_part(new Pawn(white, whitePawn));
+			cl[rows-2][j].setIcon(cl[rows-2][j].getChess_part().getIcon());
 		}
 		
-		cl[rows-1][0].setCp(new Pawn(white, whitePawn));
-		cl[rows-1][0].setIcon(cl[rows-1][0].getCp().getIcon());
-		cl[rows-1][columns-1].setCp(new Pawn(white, whitePawn));
-		cl[rows-1][columns-1].setIcon(cl[rows-1][columns-1].getCp().getIcon());
+		cl[rows-1][0].setChess_part(new Pawn(white, whitePawn));
+		cl[rows-1][0].setIcon(cl[rows-1][0].getChess_part().getIcon());
+		cl[rows-1][columns-1].setChess_part(new Pawn(white, whitePawn));
+		cl[rows-1][columns-1].setIcon(cl[rows-1][columns-1].getChess_part().getIcon());
 		
 		// creating the white rooks
-		cl[rows-1][1].setCp(new Rook(white, whiteRook));
-		cl[rows-1][1].setIcon(cl[rows-1][1].getCp().getIcon());
-		cl[rows-1][columns-2].setCp(new Rook(white, whiteRook));
-		cl[rows-1][columns-2].setIcon(cl[rows-1][columns-2].getCp().getIcon());
+		cl[rows-1][1].setChess_part(new Rook(white, whiteRook));
+		cl[rows-1][1].setIcon(cl[rows-1][1].getChess_part().getIcon());
+		cl[rows-1][columns-2].setChess_part(new Rook(white, whiteRook));
+		cl[rows-1][columns-2].setIcon(cl[rows-1][columns-2].getChess_part().getIcon());
 		
 		// creating the white king
-		cl[rows-1][columns/2].setCp(new King(white, whiteKing));
-		cl[rows-1][columns/2].setIcon(cl[rows-1][columns/2].getCp().getIcon());
+		cl[rows-1][columns/2].setChess_part(new King(white, whiteKing));
+		cl[rows-1][columns/2].setIcon(cl[rows-1][columns/2].getChess_part().getIcon());
 		
 		//-------------------------------------------------------------
 		
@@ -160,24 +160,24 @@ public class Board extends JFrame
 		// creating the black pawns
 		for(int j=0; j<columns; j++)
 		{
-			cl[1][j].setCp(new Pawn(black, blackPawn));
-			cl[1][j].setIcon(cl[1][j].getCp().getIcon());
+			cl[1][j].setChess_part(new Pawn(black, blackPawn));
+			cl[1][j].setIcon(cl[1][j].getChess_part().getIcon());
 		}
 		
-		cl[0][0].setCp(new Pawn(black, blackPawn));
-		cl[0][0].setIcon(cl[0][0].getCp().getIcon());
-		cl[0][columns-1].setCp(new Pawn(black, blackPawn));
-		cl[0][columns-1].setIcon(cl[0][columns-1].getCp().getIcon());
+		cl[0][0].setChess_part(new Pawn(black, blackPawn));
+		cl[0][0].setIcon(cl[0][0].getChess_part().getIcon());
+		cl[0][columns-1].setChess_part(new Pawn(black, blackPawn));
+		cl[0][columns-1].setIcon(cl[0][columns-1].getChess_part().getIcon());
 		
 		// creating the black rooks
-		cl[0][1].setCp(new Rook(black, blackRook));
-		cl[0][1].setIcon(cl[0][1].getCp().getIcon());
-		cl[0][columns-2].setCp(new Rook(black, blackRook));
-		cl[0][columns-2].setIcon(cl[0][columns-2].getCp().getIcon());
+		cl[0][1].setChess_part(new Rook(black, blackRook));
+		cl[0][1].setIcon(cl[0][1].getChess_part().getIcon());
+		cl[0][columns-2].setChess_part(new Rook(black, blackRook));
+		cl[0][columns-2].setIcon(cl[0][columns-2].getChess_part().getIcon());
 		
 		// creating the white king
-		cl[0][columns/2].setCp(new King(black, blackKing));
-		cl[0][columns/2].setIcon(cl[0][columns/2].getCp().getIcon()); 
+		cl[0][columns/2].setChess_part(new King(black, blackKing));
+		cl[0][columns/2].setIcon(cl[0][columns/2].getChess_part().getIcon()); 
 	}
 	
 	private void setPrizes()
@@ -263,7 +263,7 @@ public class Board extends JFrame
 			// find every empty ChessLabel
 			for(int i=0; i<rows; i++)
 				for(int j=0; j<columns; j++)
-					if(cl[i][j].getEmpty() && !cl[i][j].getHasPrize())
+					if(cl[i][j].getEmpty() && !cl[i][j].getHas_prize())
 					{
 						xAvailable.add(i);
 						yAvailable.add(j);
