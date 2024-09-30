@@ -5,9 +5,10 @@ import java.util.Random;
 
 public class World
 {
-	private String[][] board = null;
 	private int rows = 7;
 	private int columns = 5;
+	private String[][] board = null;
+
 	private int myColor = 0;
 	private ArrayList<String> availableMoves = null;
 	private int rookBlocks = 3;		// rook can move towards <rookBlocks> blocks in any vertical or horizontal direction
@@ -16,7 +17,7 @@ public class World
 	private int noPrize = 9;
 	private double inf = Double.POSITIVE_INFINITY;
 	private int score_white, score_black;
-	
+
 	public World()
 	{
 		board = new String[rows][columns];
@@ -33,20 +34,20 @@ public class World
 		*/
 		
 		// initialization of the board
-		for(int i=0; i<rows; i++)
-			for(int j=0; j<columns; j++)
+		for(int i = 0; i < rows; i++)
+			for(int j = 0; j < columns; j++)
 				board[i][j] = " ";
 		
 		// setting the black player's chess parts
 		
 		// black pawns
-		for(int j=0; j<columns; j++)
+		for(int j = 0; j < columns; j++)
 			board[1][j] = "BP";
 		
 		board[0][0] = "BP";
 		board[0][columns-1] = "BP";
 		
-		// black rooks
+		// black rooks 
 		board[0][1] = "BR";
 		board[0][columns-2] = "BR";
 		
@@ -56,7 +57,7 @@ public class World
 		// setting the white player's chess parts
 		
 		// white pawns
-		for(int j=0; j<columns; j++)
+		for(int j = 0; j < columns; j++)
 			board[rows-2][j] = "WP";
 		
 		board[rows-1][0] = "WP";
@@ -70,16 +71,13 @@ public class World
 		board[rows-1][columns/2] = "WK";
 		
 		// setting the prizes
-		for(int j=0; j<columns; j++)
+		for(int j = 0; j < columns; j++)
 			board[rows/2][j] = "P";
 		
 		availableMoves = new ArrayList<String>();
 	}
 	
-	public void setMyColor(int myColor)
-	{
-		this.myColor = myColor;
-	}
+	public void setMyColor(int myColor)	{	this.myColor = myColor;	}
 	
 	public String selectAction(int score_white, int score_black, String logic)
 	{
