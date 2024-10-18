@@ -1,5 +1,5 @@
 <H1> TUC Chess AI agent</H1>
-This repository holds the enviroment and the agent of TUC-CHESS that was designed and developed for the purposes of the course "Artificial Intelligence" during the 2022 year. 
+This repository holds the enviroment and the agent of TUC-CHESS that was designed and developed for the purposes of the course "Artificial Intelligence" during the 2022 year, it was created by myself and Manesiotis Thanasis. 
 
 The functionality of the environment was provided to us for the purposes of the project. It is similar to conventional chess, but is modified to different functionality, it uses the dimensions of 5x7 it generates random prizes, has special rules, such as 4 second time restriction per move.
 
@@ -12,13 +12,13 @@ The second game playing logic was created by implementing the algorithm of Monte
 
 The pieces found in this special chess are the following:
 
-- ![image info](./chess/king_black.gif), ![image info](./chess/king_white.gif) A king = 8 points 
-- ![image info](./chess/pawn_black.gif) ![image info](./chess/pawn_white.gif) 7 pawns = 1 point each 
-- ![image info](./chess/rook_black.gif) ![image info](./chess/rook_white.gif) 2 rooks = 3 points each
-- ![image info](./chess/prize.png) and prizes, that are neutral = 1 point each
+- ![image info](./chess_images/king_black.gif), ![image info](./chess_images/king_white.gif) A king = 8 points 
+- ![image info](./chess_images/pawn_black.gif) ![image info](./chess_images/pawn_white.gif) 7 pawns = 1 point each 
+- ![image info](./chess_images/rook_black.gif) ![image info](./chess_images/rook_white.gif) 2 rooks = 3 points each
+- ![image info](./chess_images/prize.png) and prizes, that are neutral = 1 point each
 
 The starting position of all the pieces is present in the image below:
-![image info](./chess/board.png)
+![image info](./chess_images/board.png)
 
 <H2>Rules of the Game</H2>
 As with classical chess, this chess is also turn based and following the tradition of chess, the white player plays the first move.
@@ -48,4 +48,5 @@ Movement of the pieces:
 
 
 <H2> Installation </H2>
-Download the .jar file to get the application and then double click, to see the application
+Download the .jar file to get the application and then double click, to play with the application
+
