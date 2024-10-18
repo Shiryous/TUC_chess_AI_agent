@@ -48,8 +48,5 @@ Movement of the pieces:
 
 
 <H2> Installation </H2>
-<<<<<<< HEAD
-Download the .zip file in order to get the components, and play with the parameters.
-=======
-Download the source files, with either the .zip file, or by using git clone.
->>>>>>> 5d48244b5a8260d15720fedcc292858c71b7a82d
+Download the .jar file to get the application and then double click, to play with the application
+
