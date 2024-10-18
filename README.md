@@ -48,4 +48,4 @@ Movement of the pieces:
 
 
 <H2> Installation </H2>
-Download the .zip file in order to get the components, and play with the parameters.
+Download the .jar file to get the application and then double click, to see the application
