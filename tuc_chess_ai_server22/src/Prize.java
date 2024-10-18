@@ -9,7 +9,7 @@ public class Prize
 	
 	public Prize()
 	{
-		image =  new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/prize.png");
+		image =  new ImageIcon("./tuc_chess_ai_server22/chess/prize.png");
 		
 		if(Math.random() > Board.getValueChance()) // Default value chance is 0.95
 			value = min_value;

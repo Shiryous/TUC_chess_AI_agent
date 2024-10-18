@@ -24,7 +24,7 @@ public class Screen extends JFrame
 		this.add(scroll_pane);
 				
 		this.setBounds(750, 100, 400, 500);
-		ImageIcon img = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai22/chess/chessimage.jpg");
+		ImageIcon img = new ImageIcon("TUC_chess_AI_agent/tuc_chess_ai_server22/chess/chessimage.jpg");
 		this.setIconImage(img.getImage());
 		this.setVisible(true);
 		this.setTitle("TUC-Chess Screen");
